@@ -2,3 +2,8 @@
 
 .DS_Store
 *.psd
+
+memo/
+
+.claude/settings.local.json
+.claude/commands/*.md
