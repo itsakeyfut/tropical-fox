@@ -1,0 +1,6 @@
+// ⚠ 実際のスプライトを見て調整してください。
+(
+    idle: (first: 0, last: 3),
+    run: (first: 6, last: 11),
+    jump: (first: 12, last: 15),
+)
