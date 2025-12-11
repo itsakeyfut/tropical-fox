@@ -13,17 +13,20 @@ mod plugins;
 mod resources;
 mod systems;
 
+use config::load_settings_or_default;
 use plugins::CorePlugin;
 
 fn main() {
+    let settings = load_settings_or_default("assets/config/game_settings.ron");
+
     App::new()
         .add_plugins(
             DefaultPlugins
                 .set(WindowPlugin {
                     primary_window: Some(Window {
-                        title: "Tropical Fox".to_string(),
-                        resolution: (1280, 720).into(),
-                        resizable: true,
+                        title: settings.window.title.clone(),
+                        resolution: (settings.window.width, settings.window.height).into(),
+                        resizable: settings.window.resizable,
                         ..default()
                     }),
                     ..default()

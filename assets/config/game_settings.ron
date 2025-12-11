@@ -1,0 +1,12 @@
+(
+    physics: (
+        gravity: -980.0,
+        terminal_velocity: -500.0,
+    ),
+    window: (
+        width: 1280,
+        height: 720,
+        title: "Tropical Fox",
+        resizable: true,
+    ),
+)

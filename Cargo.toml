@@ -3,9 +3,14 @@ name = "tropical-fox"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+default = []
+# Development feature: enables dynamic linking for faster iteration
+bevy-dev = ["bevy/dynamic_linking"]
+
 [dependencies]
 # Core Bevy engine
-bevy = { version = "0.17.3", features = ["dynamic_linking"] }
+bevy = { version = "0.17.3" }
 
 # Physics
 bevy_rapier2d = { version = "0.32.0", features = ["simd-stable", "debug-render-2d"] }
