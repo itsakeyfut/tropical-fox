@@ -143,8 +143,11 @@ pub fn ground_collision(
             // Reset dash count when on ground
             player.dashes_remaining = stats.max_air_dashes;
         } else if was_grounded {
-            // Just left ground - start coyote time
-            player.coyote_timer = stats.coyote_time;
+            // Just left ground - only start coyote time if it wasn't consumed by a jump
+            // (If player jumped, coyote_timer is already 0)
+            if player.coyote_timer > 0.0 {
+                player.coyote_timer = stats.coyote_time;
+            }
         } else {
             // In air - countdown coyote timer
             player.coyote_timer = (player.coyote_timer - time.delta_secs()).max(0.0);
@@ -158,8 +161,8 @@ pub fn variable_jump_height(
     mut query: Query<(&mut Velocity, &PlayerStats), With<Player>>,
 ) {
     for (mut velocity, stats) in &mut query {
-        // If player releases jump button while still moving upward, cut the jump short
-        if !keyboard.pressed(KeyCode::Space) && velocity.y > 0.0 {
+        // If player just released jump button while still moving upward, cut the jump short
+        if keyboard.just_released(KeyCode::Space) && velocity.y > 0.0 {
             velocity.y *= stats.jump_cut_multiplier;
         }
     }
@@ -266,7 +269,8 @@ pub fn wall_collision(
                         // Push player to the left of the wall
                         let wall_left_edge =
                             wall_pos.x + wall_collider.offset.x - wall_collider.size.x / 2.0;
-                        let player_right_edge = player_collider.size.x / 2.0;
+                        let player_right_edge =
+                            player_collider.offset.x + player_collider.size.x / 2.0;
                         player_transform.translation.x = wall_left_edge - player_right_edge;
 
                         // Stop horizontal movement into the wall
@@ -280,8 +284,9 @@ pub fn wall_collision(
                         // Push player to the right of the wall
                         let wall_right_edge =
                             wall_pos.x + wall_collider.offset.x + wall_collider.size.x / 2.0;
-                        let player_left_edge = player_collider.size.x / 2.0;
-                        player_transform.translation.x = wall_right_edge + player_left_edge;
+                        let player_left_edge =
+                            player_collider.offset.x - player_collider.size.x / 2.0;
+                        player_transform.translation.x = wall_right_edge - player_left_edge;
 
                         // Stop horizontal movement into the wall
                         if velocity.x < 0.0 {
