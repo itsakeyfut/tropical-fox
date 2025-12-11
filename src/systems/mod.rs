@@ -7,5 +7,6 @@ pub mod player;
 
 pub use physics::{apply_gravity, update_position};
 pub use player::{
-    flip_sprite_by_facing, ground_collision, player_horizontal_movement, player_jump,
+    flip_sprite_by_facing, ground_collision, player_dash, player_horizontal_movement, player_jump,
+    update_dash, variable_jump_height, wall_collision, wall_jump, wall_slide,
 };

@@ -9,4 +9,29 @@
         title: "Tropical Fox",
         resizable: true,
     ),
+    player: (
+        // Movement
+        move_speed: 200.0,
+        acceleration: 10.0,
+        deceleration: 15.0,
+        air_deceleration: 20.0,   // Air friction - stronger than ground for better landing precision
+
+        // Jump
+        jump_force: 400.0,
+        jump_cut_multiplier: 0.4,
+
+        // Advanced jump mechanics (Celeste-inspired)
+        coyote_time: 0.15,        // Time after leaving ground where jump is still allowed
+        jump_buffer_time: 0.15,   // Time before landing where jump input is remembered
+
+        // Dash (Celeste-inspired)
+        dash_speed: 500.0,        // Speed during dash
+        dash_duration: 0.15,      // How long the dash lasts
+        max_air_dashes: 1,        // Number of air dashes before needing to touch ground
+
+        // Wall mechanics (Celeste-inspired)
+        wall_jump_force_x: 300.0, // Horizontal push away from wall
+        wall_jump_force_y: 400.0, // Vertical jump force
+        wall_slide_speed: -100.0, // Slow slide down wall
+    ),
 )
