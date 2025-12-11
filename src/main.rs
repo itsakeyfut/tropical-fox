@@ -33,6 +33,7 @@ fn main() {
                 })
                 .set(ImagePlugin::default_nearest()),
         )
+        .insert_resource(settings)
         .add_plugins((CorePlugin, PlayerPlugin))
         .run();
 }
