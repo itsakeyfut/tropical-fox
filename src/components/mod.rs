@@ -61,9 +61,13 @@ impl Default for Player {
 pub struct PlayerStats {
     /// Maximum horizontal movement speed (pixels per second)
     pub move_speed: f32,
-    /// Horizontal acceleration rate (0.0 to 1.0, lower = more responsive)
+    /// Horizontal acceleration rate (higher = more responsive)
+    /// Multiplied by delta time to create frame-rate independent interpolation
+    /// Typical range: 5.0-20.0
     pub acceleration: f32,
-    /// Horizontal deceleration rate (0.0 to 1.0, lower = more responsive)
+    /// Horizontal deceleration rate (higher = more responsive)
+    /// Multiplied by delta time to create frame-rate independent interpolation
+    /// Typical range: 5.0-20.0
     pub deceleration: f32,
     /// Jump force (upward velocity in pixels per second)
     pub jump_force: f32,
