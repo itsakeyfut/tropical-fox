@@ -13,11 +13,20 @@ mod plugins;
 mod resources;
 mod systems;
 
-use config::load_settings_or_default;
-use plugins::{CorePlugin, PlayerPlugin};
+use config::{SelectedCharacter, load_characters_config_optional, load_settings_or_default};
+use plugins::{AnimationPlugin, CorePlugin, PlayerPlugin};
 
 fn main() {
     let settings = load_settings_or_default("assets/config/game_settings.ron");
+
+    // Load character configuration and set selected character
+    let selected_character = if let Some(characters_config) =
+        load_characters_config_optional("assets/config/characters.ron")
+    {
+        SelectedCharacter::new(characters_config.default_player.clone())
+    } else {
+        SelectedCharacter::default()
+    };
 
     App::new()
         .add_plugins(
@@ -34,6 +43,7 @@ fn main() {
                 .set(ImagePlugin::default_nearest()),
         )
         .insert_resource(settings)
-        .add_plugins((CorePlugin, PlayerPlugin))
+        .insert_resource(selected_character)
+        .add_plugins((CorePlugin, AnimationPlugin, PlayerPlugin))
         .run();
 }

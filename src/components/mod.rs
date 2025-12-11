@@ -2,7 +2,13 @@
 //!
 //! This module will contain all ECS components used throughout the game.
 
+pub mod animation;
+
 use bevy::prelude::*;
+
+pub use animation::{
+    AnimationClip, AnimationController, AnimationEvent, AnimationEvents, AnimationState,
+};
 
 /// Velocity component for entities that move
 #[derive(Component, Debug, Default)]

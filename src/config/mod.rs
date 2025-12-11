@@ -2,11 +2,20 @@
 //!
 //! This module handles loading and managing game configuration.
 
+pub mod animation;
+pub mod characters;
+
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::fs;
 use std::path::Path;
 use thiserror::Error;
+
+pub use animation::load_animation_config_optional;
+pub use characters::{
+    CharacterDefinition, CharacterType, CharactersConfig, SelectedCharacter,
+    load_characters_config_optional,
+};
 
 /// Physics settings
 #[derive(Debug, Clone, Serialize, Deserialize)]

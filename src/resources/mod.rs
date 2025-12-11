@@ -22,3 +22,22 @@ impl Default for PhysicsConfig {
         }
     }
 }
+
+/// Character sprite assets (texture atlas layouts and textures)
+#[derive(Resource, Debug)]
+pub struct CharacterAssets {
+    /// Handle to the fox character's texture atlas layout
+    pub fox_layout: Handle<TextureAtlasLayout>,
+    /// Handle to the fox character's sprite texture
+    pub fox_texture: Handle<Image>,
+}
+
+impl CharacterAssets {
+    /// Create new character assets with the given handles
+    pub fn new(fox_layout: Handle<TextureAtlasLayout>, fox_texture: Handle<Image>) -> Self {
+        Self {
+            fox_layout,
+            fox_texture,
+        }
+    }
+}

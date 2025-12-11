@@ -124,13 +124,24 @@ pub fn ground_collision(
 
             // Check AABB collision
             if check_aabb_collision(player_pos, player_collider, ground_pos, ground_collider) {
-                // Collision from above (player is falling onto ground)
-                if velocity.y < 0.0 {
+                // Check if player is on top of the ground (not below it)
+                let player_bottom =
+                    player_pos.y + player_collider.offset.y - player_collider.size.y / 2.0;
+                let ground_top =
+                    ground_pos.y + ground_collider.offset.y + ground_collider.size.y / 2.0;
+
+                // Player is on ground if they're above or slightly overlapping with ground top
+                if player_bottom <= ground_top + 5.0 && velocity.y <= 0.1 {
                     // Position player on top of the ground
                     player_transform.translation.y = ground_transform.translation.y
                         + ground_collider.size.y / 2.0
                         + player_collider.size.y / 2.0;
-                    velocity.y = 0.0;
+
+                    // Stop downward velocity
+                    if velocity.y < 0.0 {
+                        velocity.y = 0.0;
+                    }
+
                     ground_detection.is_grounded = true;
                 }
             }
