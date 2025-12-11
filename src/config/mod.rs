@@ -30,9 +30,9 @@ impl Default for PhysicsSettings {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct WindowSettings {
     /// Window width
-    pub width: f32,
+    pub width: u32,
     /// Window height
-    pub height: f32,
+    pub height: u32,
     /// Window title
     pub title: String,
     /// Whether the window is resizable
@@ -42,8 +42,8 @@ pub struct WindowSettings {
 impl Default for WindowSettings {
     fn default() -> Self {
         Self {
-            width: 1280.0,
-            height: 720.0,
+            width: 1280,
+            height: 720,
             title: "Tropical Fox".to_string(),
             resizable: true,
         }
@@ -98,8 +98,8 @@ mod tests {
     fn test_default_settings() {
         let settings = GameSettings::default();
         assert_eq!(settings.physics.gravity, -980.0);
-        assert_eq!(settings.window.width, 1280.0);
-        assert_eq!(settings.window.height, 720.0);
+        assert_eq!(settings.window.width, 1280);
+        assert_eq!(settings.window.height, 720);
     }
 
     #[test]

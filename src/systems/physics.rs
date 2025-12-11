@@ -15,9 +15,12 @@ pub fn apply_gravity(
 ) {
     let delta = time.delta_secs();
     let base_gravity = physics_config.gravity;
+    let terminal_velocity = physics_config.terminal_velocity;
 
     for (gravity, mut velocity) in query.iter_mut() {
         velocity.y += base_gravity * gravity.scale * delta;
+        // Clamp velocity to terminal velocity (prevent falling faster than terminal_velocity)
+        velocity.y = velocity.y.max(terminal_velocity);
     }
 }
 
