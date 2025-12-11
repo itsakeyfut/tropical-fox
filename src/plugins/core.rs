@@ -6,6 +6,7 @@ use bevy::prelude::*;
 
 use crate::config;
 use crate::game_state::{GameState, InGameState};
+use crate::plugins::player::spawn_test_ground;
 use crate::resources::PhysicsConfig;
 use crate::systems::{apply_gravity, update_position};
 
@@ -29,7 +30,10 @@ impl Plugin for CorePlugin {
         app.insert_resource(physics_config);
 
         // Register startup systems
-        app.add_systems(Startup, setup_camera);
+        app.add_systems(Startup, (setup_camera, setup_initial_state));
+
+        // Spawn test ground when entering InGame state
+        app.add_systems(OnEnter(GameState::InGame), spawn_test_ground);
 
         // Register physics systems (run in FixedUpdate for consistent physics)
         app.add_systems(FixedUpdate, (apply_gravity, update_position).chain());
@@ -39,4 +43,9 @@ impl Plugin for CorePlugin {
 /// Set up the main 2D camera
 fn setup_camera(mut commands: Commands) {
     commands.spawn((Camera2d, Name::new("Main Camera")));
+}
+
+/// Set initial game state to InGame for development
+fn setup_initial_state(mut next_state: ResMut<NextState<GameState>>) {
+    next_state.set(GameState::InGame);
 }

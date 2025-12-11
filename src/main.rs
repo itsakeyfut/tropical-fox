@@ -14,7 +14,7 @@ mod resources;
 mod systems;
 
 use config::load_settings_or_default;
-use plugins::CorePlugin;
+use plugins::{CorePlugin, PlayerPlugin};
 
 fn main() {
     let settings = load_settings_or_default("assets/config/game_settings.ron");
@@ -33,6 +33,6 @@ fn main() {
                 })
                 .set(ImagePlugin::default_nearest()),
         )
-        .add_plugins(CorePlugin)
+        .add_plugins((CorePlugin, PlayerPlugin))
         .run();
 }
