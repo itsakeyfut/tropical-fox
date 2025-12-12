@@ -15,13 +15,28 @@ pub struct AnimationClip {
 }
 
 impl AnimationClip {
-    /// Create a new animation clip
-    pub fn new(first_frame: usize, last_frame: usize, fps: f32) -> Self {
-        Self {
+    /// Create a new animation clip with validation
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if:
+    /// - `first_frame > last_frame`
+    /// - `fps <= 0.0`
+    pub fn new(first_frame: usize, last_frame: usize, fps: f32) -> Result<Self, String> {
+        if first_frame > last_frame {
+            return Err(format!(
+                "first_frame ({}) must be <= last_frame ({})",
+                first_frame, last_frame
+            ));
+        }
+        if fps <= 0.0 {
+            return Err(format!("fps must be positive, got {}", fps));
+        }
+        Ok(Self {
             first_frame,
             last_frame,
             fps,
-        }
+        })
     }
 
     /// Get the total number of frames in this clip
@@ -81,6 +96,35 @@ impl AnimationController {
     /// Get the current animation clip, if one exists
     pub fn current_clip(&self) -> Option<&AnimationClip> {
         self.animations.get(&self.current_animation)
+    }
+
+    /// Create an animation controller with properly initialized state, ready to play
+    ///
+    /// This helper method ensures that the AnimationState is correctly synchronized
+    /// with the default animation's timing parameters.
+    ///
+    /// # Arguments
+    ///
+    /// * `looping` - Whether animations should loop when they reach the end
+    ///
+    /// # Returns
+    ///
+    /// A tuple of (AnimationController, AnimationState) ready to be inserted as components
+    pub fn with_initial_state(self, looping: bool) -> (Self, AnimationState) {
+        let mut state = AnimationState::new(10.0, looping);
+
+        // Initialize state with the current animation's timing
+        if let Some(clip) = self.current_clip() {
+            state.current_frame = clip.first_frame;
+            let frame_duration = 1.0 / clip.fps;
+            state
+                .timer
+                .set_duration(std::time::Duration::from_secs_f32(frame_duration));
+            state.timer.reset();
+            state.playing = true;
+        }
+
+        (self, state)
     }
 }
 
@@ -169,10 +213,10 @@ mod tests {
 
     #[test]
     fn test_animation_clip_frame_count() {
-        let clip = AnimationClip::new(0, 9, 10.0);
+        let clip = AnimationClip::new(0, 9, 10.0).unwrap();
         assert_eq!(clip.frame_count(), 10);
 
-        let clip2 = AnimationClip::new(5, 10, 12.0);
+        let clip2 = AnimationClip::new(5, 10, 12.0).unwrap();
         assert_eq!(clip2.frame_count(), 6);
     }
 
@@ -181,8 +225,8 @@ mod tests {
         let mut controller = AnimationController::new();
         let mut state = AnimationState::default();
 
-        controller.add_animation("idle", AnimationClip::new(0, 3, 8.0));
-        controller.add_animation("run", AnimationClip::new(4, 9, 12.0));
+        controller.add_animation("idle", AnimationClip::new(0, 3, 8.0).unwrap());
+        controller.add_animation("run", AnimationClip::new(4, 9, 12.0).unwrap());
 
         controller.play("idle", &mut state);
         assert_eq!(controller.current_animation, "idle");
@@ -198,5 +242,28 @@ mod tests {
 
         let frame_events = events.get_events(5).unwrap();
         assert_eq!(frame_events.len(), 2);
+    }
+
+    #[test]
+    fn test_animation_clip_validation() {
+        // Test invalid frame range
+        let result = AnimationClip::new(10, 5, 10.0);
+        assert!(result.is_err());
+        assert!(result
+            .unwrap_err()
+            .contains("first_frame (10) must be <= last_frame (5)"));
+
+        // Test invalid fps
+        let result = AnimationClip::new(0, 5, 0.0);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("fps must be positive"));
+
+        let result = AnimationClip::new(0, 5, -1.0);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("fps must be positive"));
+
+        // Test valid clip
+        let result = AnimationClip::new(0, 5, 10.0);
+        assert!(result.is_ok());
     }
 }

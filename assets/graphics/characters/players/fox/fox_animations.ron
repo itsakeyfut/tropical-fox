@@ -9,7 +9,7 @@
 
     // Sprite sheet grid dimensions
     columns: 6,
-    rows: 10,
+    rows: 12,
 
     // Animation clips definition
     // Each clip defines a range of frames and playback speed

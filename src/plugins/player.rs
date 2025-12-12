@@ -5,7 +5,7 @@
 use bevy::prelude::*;
 
 use crate::components::{
-    AnimationClip, AnimationController, AnimationState, Collider, Gravity, GroundDetection, Player,
+    AnimationClip, AnimationController, Collider, Gravity, GroundDetection, Player,
     PlayerStats, Velocity,
 };
 use crate::config::{
@@ -101,37 +101,30 @@ fn spawn_player(
     // Try to load animation config
     let animation_config = load_animation_config_optional(&animation_config_path);
 
-    // Create animation controller
-    let mut animation_controller = if let Some(config) = animation_config {
+    // Create animation controller with properly initialized state
+    let (animation_controller, animation_state) = if let Some(config) = animation_config {
         info!("Setting up player animations from config");
-        AnimationController::from(config)
+        AnimationController::try_from(config)
+            .expect("Failed to create AnimationController from config")
+            .with_initial_state(true)
     } else {
         info!("Setting up placeholder player animations");
         // Create placeholder animations matching fox_animations.ron
         let mut controller = AnimationController::new();
-        controller.add_animation("idle", AnimationClip::new(0, 3, 4.0));
-        controller.add_animation("run", AnimationClip::new(6, 11, 12.0));
-        controller.add_animation("climb", AnimationClip::new(12, 15, 10.0));
-        controller.add_animation("crouch", AnimationClip::new(18, 20, 10.0));
-        controller.add_animation("hurt", AnimationClip::new(24, 25, 15.0));
-        controller.add_animation("jump", AnimationClip::new(30, 30, 1.0));
-        controller.add_animation("fall", AnimationClip::new(31, 31, 1.0));
-        controller.add_animation("dizzy", AnimationClip::new(48, 53, 8.0));
-        controller.add_animation("roll", AnimationClip::new(54, 57, 12.0));
-        controller.add_animation("look_up", AnimationClip::new(60, 60, 1.0));
-        controller.add_animation("win", AnimationClip::new(66, 66, 1.0));
+        controller.add_animation("idle", AnimationClip::new(0, 3, 4.0).unwrap());
+        controller.add_animation("run", AnimationClip::new(6, 11, 12.0).unwrap());
+        controller.add_animation("climb", AnimationClip::new(12, 15, 10.0).unwrap());
+        controller.add_animation("crouch", AnimationClip::new(18, 20, 10.0).unwrap());
+        controller.add_animation("hurt", AnimationClip::new(24, 25, 15.0).unwrap());
+        controller.add_animation("jump", AnimationClip::new(30, 30, 1.0).unwrap());
+        controller.add_animation("fall", AnimationClip::new(31, 31, 1.0).unwrap());
+        controller.add_animation("dizzy", AnimationClip::new(48, 53, 8.0).unwrap());
+        controller.add_animation("roll", AnimationClip::new(54, 57, 12.0).unwrap());
+        controller.add_animation("look_up", AnimationClip::new(60, 60, 1.0).unwrap());
+        controller.add_animation("win", AnimationClip::new(66, 66, 1.0).unwrap());
         controller.current_animation = "idle".to_string();
-        controller
+        controller.with_initial_state(true)
     };
-
-    // Set up animation state
-    let mut animation_state = AnimationState::new(10.0, true);
-
-    // Explicitly play the initial animation to ensure timer is set correctly
-    // Temporarily clear current_animation so play() will initialize it properly
-    let initial_animation = animation_controller.current_animation.clone();
-    animation_controller.current_animation = String::new();
-    animation_controller.play(&initial_animation, &mut animation_state);
 
     // Check if we have character assets loaded
     if let Some(assets) = character_assets {

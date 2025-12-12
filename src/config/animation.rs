@@ -38,23 +38,30 @@ pub struct AnimationClipConfig {
     pub fps: f32,
 }
 
-impl From<AnimationClipConfig> for AnimationClip {
-    fn from(config: AnimationClipConfig) -> Self {
+impl TryFrom<AnimationClipConfig> for AnimationClip {
+    type Error = String;
+
+    fn try_from(config: AnimationClipConfig) -> Result<Self, Self::Error> {
         AnimationClip::new(config.first, config.last, config.fps)
     }
 }
 
-impl From<AnimationConfig> for AnimationController {
-    fn from(config: AnimationConfig) -> Self {
+impl TryFrom<AnimationConfig> for AnimationController {
+    type Error = String;
+
+    fn try_from(config: AnimationConfig) -> Result<Self, Self::Error> {
         let mut controller = AnimationController::new();
 
         for (name, clip_config) in config.clips {
-            controller.add_animation(name, clip_config.into());
+            let clip = AnimationClip::try_from(clip_config).map_err(|e| {
+                format!("Failed to create animation clip '{}': {}", name, e)
+            })?;
+            controller.add_animation(name, clip);
         }
 
         controller.current_animation = config.default_animation.clone();
 
-        controller
+        Ok(controller)
     }
 }
 
@@ -100,7 +107,7 @@ mod tests {
             fps: 10.0,
         };
 
-        let clip: AnimationClip = config.into();
+        let clip: AnimationClip = config.try_into().unwrap();
         assert_eq!(clip.first_frame, 0);
         assert_eq!(clip.last_frame, 5);
         assert_eq!(clip.fps, 10.0);
@@ -135,7 +142,7 @@ mod tests {
             default_animation: "idle".to_string(),
         };
 
-        let controller: AnimationController = config.into();
+        let controller: AnimationController = config.try_into().unwrap();
         assert_eq!(controller.current_animation, "idle");
         assert_eq!(controller.animations.len(), 2);
         assert!(controller.animations.contains_key("idle"));

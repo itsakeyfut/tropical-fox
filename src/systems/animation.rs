@@ -126,7 +126,7 @@ mod tests {
 
         // Set up a test entity with animation components
         let mut controller = AnimationController::new();
-        controller.add_animation("test", AnimationClip::new(0, 3, 10.0));
+        controller.add_animation("test", AnimationClip::new(0, 3, 10.0).unwrap());
 
         let mut state = AnimationState::new(10.0, true);
         state.playing = true;
