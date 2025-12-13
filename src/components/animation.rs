@@ -1,8 +1,8 @@
 //! Animation components for sprite-based animation system
 
+use crate::error::AnimationError;
 use bevy::prelude::*;
 use std::collections::HashMap;
-use crate::error::AnimationError;
 
 /// An animation clip defines a range of frames and playback speed
 #[derive(Clone, Debug)]
@@ -29,11 +29,17 @@ impl AnimationClip {
             return Err(AnimationError::invalid_frame_range(
                 first_frame,
                 last_frame,
-                format!("first_frame ({}) must be <= last_frame ({})", first_frame, last_frame),
+                format!(
+                    "first_frame ({}) must be <= last_frame ({})",
+                    first_frame, last_frame
+                ),
             ));
         }
         if !fps.is_finite() || fps <= 0.0 {
-            return Err(AnimationError::invalid_fps(fps, "fps must be positive and finite"));
+            return Err(AnimationError::invalid_fps(
+                fps,
+                "fps must be positive and finite",
+            ));
         }
         Ok(Self {
             first_frame,
@@ -256,19 +262,31 @@ mod tests {
         // Test invalid frame range
         let result = AnimationClip::new(10, 5, 10.0);
         assert!(result.is_err());
-        assert!(result
-            .unwrap_err()
-            .to_string()
-            .contains("first_frame (10) must be <= last_frame (5)"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("first_frame (10) must be <= last_frame (5)")
+        );
 
         // Test invalid fps
         let result = AnimationClip::new(0, 5, 0.0);
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("fps must be positive"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("fps must be positive")
+        );
 
         let result = AnimationClip::new(0, 5, -1.0);
         assert!(result.is_err());
-        assert!(result.unwrap_err().to_string().contains("fps must be positive"));
+        assert!(
+            result
+                .unwrap_err()
+                .to_string()
+                .contains("fps must be positive")
+        );
 
         // Test valid clip
         let result = AnimationClip::new(0, 5, 10.0);

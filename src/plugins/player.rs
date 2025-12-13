@@ -4,6 +4,7 @@
 
 use bevy::prelude::*;
 
+use crate::combat::{AttackCooldown, EnemyHealth, Health, Lives, PlayerHealth, PlayerSpawnPoint};
 use crate::components::{
     AnimationClip, AnimationController, AnimationState, Collider, Gravity, GroundDetection, Player,
     PlayerStats, Velocity,
@@ -24,6 +25,9 @@ pub struct PlayerPlugin;
 
 impl Plugin for PlayerPlugin {
     fn build(&self, app: &mut App) {
+        // Add spawn point resource
+        app.insert_resource(PlayerSpawnPoint::default());
+
         // Spawn player and test level when entering InGame state
         app.add_systems(OnEnter(GameState::InGame), (spawn_player, spawn_test_walls));
 
@@ -60,9 +64,8 @@ impl Plugin for PlayerPlugin {
     }
 }
 
-
 /// Create fallback animation controller with hardcoded animations
-/// 
+///
 /// Used when animation config file fails to load or parse
 fn create_fallback_animation_controller() -> (AnimationController, AnimationState) {
     info!("Setting up fallback player animations");
@@ -166,6 +169,12 @@ fn spawn_player(
         entity.insert(animation_controller);
         entity.insert(animation_state);
 
+        // Combat components
+        entity.insert(Health::new(100.0));
+        entity.insert(PlayerHealth);
+        entity.insert(Lives::new(3));
+        entity.insert(AttackCooldown::default());
+
         info!("Player spawned at position (0, 100) with texture atlas animation");
     } else {
         // Fallback to colored square if assets aren't loaded yet
@@ -190,6 +199,12 @@ fn spawn_player(
 
         entity.insert(animation_controller);
         entity.insert(animation_state);
+
+        // Combat components
+        entity.insert(Health::new(100.0));
+        entity.insert(PlayerHealth);
+        entity.insert(Lives::new(3));
+        entity.insert(AttackCooldown::default());
 
         info!("Player spawned at position (0, 100) with placeholder sprite");
     }
@@ -265,5 +280,22 @@ pub fn spawn_test_walls(mut commands: Commands) {
         Name::new("Middle Platform"),
     ));
 
+    // Test enemy for combat testing
+    let enemy_size = Vec2::new(48.0, 48.0);
+    commands.spawn((
+        Transform::from_xyz(150.0, 50.0, 0.0),
+        Visibility::default(),
+        Sprite {
+            color: Color::srgb(0.8, 0.2, 0.2), // Red enemy
+            custom_size: Some(enemy_size),
+            ..default()
+        },
+        Health::new(30.0),
+        EnemyHealth,
+        Collider::new(enemy_size),
+        Name::new("Test Enemy"),
+    ));
+
     info!("Test walls spawned at positions (-350, 50) and (350, 50)");
+    info!("Test enemy spawned at position (150, 50)");
 }
