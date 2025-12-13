@@ -5,7 +5,7 @@
 use bevy::prelude::*;
 
 use crate::components::{
-    AnimationClip, AnimationController, Collider, Gravity, GroundDetection, Player,
+    AnimationClip, AnimationController, AnimationState, Collider, Gravity, GroundDetection, Player,
     PlayerStats, Velocity,
 };
 use crate::config::{
@@ -60,6 +60,28 @@ impl Plugin for PlayerPlugin {
     }
 }
 
+
+/// Create fallback animation controller with hardcoded animations
+/// 
+/// Used when animation config file fails to load or parse
+fn create_fallback_animation_controller() -> (AnimationController, AnimationState) {
+    info!("Setting up fallback player animations");
+    let mut controller = AnimationController::new();
+    // These unwrap() calls are safe because they use hardcoded valid values
+    controller.add_animation("idle", AnimationClip::new(0, 3, 4.0).unwrap());
+    controller.add_animation("run", AnimationClip::new(6, 11, 12.0).unwrap());
+    controller.add_animation("climb", AnimationClip::new(12, 15, 10.0).unwrap());
+    controller.add_animation("crouch", AnimationClip::new(18, 20, 10.0).unwrap());
+    controller.add_animation("hurt", AnimationClip::new(24, 25, 15.0).unwrap());
+    controller.add_animation("jump", AnimationClip::new(30, 30, 1.0).unwrap());
+    controller.add_animation("fall", AnimationClip::new(31, 31, 1.0).unwrap());
+    controller.add_animation("dizzy", AnimationClip::new(48, 53, 8.0).unwrap());
+    controller.add_animation("roll", AnimationClip::new(54, 57, 12.0).unwrap());
+    controller.add_animation("look_up", AnimationClip::new(60, 60, 1.0).unwrap());
+    controller.add_animation("win", AnimationClip::new(66, 66, 1.0).unwrap());
+    controller.current_animation = "idle".to_string();
+    controller.with_initial_state(true)
+}
 /// Spawn the player entity
 fn spawn_player(
     mut commands: Commands,
@@ -104,26 +126,16 @@ fn spawn_player(
     // Create animation controller with properly initialized state
     let (animation_controller, animation_state) = if let Some(config) = animation_config {
         info!("Setting up player animations from config");
-        AnimationController::try_from(config)
-            .expect("Failed to create AnimationController from config")
-            .with_initial_state(true)
+        match AnimationController::try_from(config) {
+            Ok(controller) => controller.with_initial_state(true),
+            Err(e) => {
+                warn!("Failed to create AnimationController from config: {}", e);
+                warn!("Falling back to hardcoded animations");
+                create_fallback_animation_controller()
+            }
+        }
     } else {
-        info!("Setting up placeholder player animations");
-        // Create placeholder animations matching fox_animations.ron
-        let mut controller = AnimationController::new();
-        controller.add_animation("idle", AnimationClip::new(0, 3, 4.0).unwrap());
-        controller.add_animation("run", AnimationClip::new(6, 11, 12.0).unwrap());
-        controller.add_animation("climb", AnimationClip::new(12, 15, 10.0).unwrap());
-        controller.add_animation("crouch", AnimationClip::new(18, 20, 10.0).unwrap());
-        controller.add_animation("hurt", AnimationClip::new(24, 25, 15.0).unwrap());
-        controller.add_animation("jump", AnimationClip::new(30, 30, 1.0).unwrap());
-        controller.add_animation("fall", AnimationClip::new(31, 31, 1.0).unwrap());
-        controller.add_animation("dizzy", AnimationClip::new(48, 53, 8.0).unwrap());
-        controller.add_animation("roll", AnimationClip::new(54, 57, 12.0).unwrap());
-        controller.add_animation("look_up", AnimationClip::new(60, 60, 1.0).unwrap());
-        controller.add_animation("win", AnimationClip::new(66, 66, 1.0).unwrap());
-        controller.current_animation = "idle".to_string();
-        controller.with_initial_state(true)
+        create_fallback_animation_controller()
     };
 
     // Check if we have character assets loaded

@@ -3,6 +3,7 @@
 //! Defines the format for animation configuration files (RON)
 
 use crate::components::{AnimationClip, AnimationController};
+use crate::error::AnimationError;
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
@@ -39,7 +40,7 @@ pub struct AnimationClipConfig {
 }
 
 impl TryFrom<AnimationClipConfig> for AnimationClip {
-    type Error = String;
+    type Error = AnimationError;
 
     fn try_from(config: AnimationClipConfig) -> Result<Self, Self::Error> {
         AnimationClip::new(config.first, config.last, config.fps)
@@ -47,14 +48,17 @@ impl TryFrom<AnimationClipConfig> for AnimationClip {
 }
 
 impl TryFrom<AnimationConfig> for AnimationController {
-    type Error = String;
+    type Error = AnimationError;
 
     fn try_from(config: AnimationConfig) -> Result<Self, Self::Error> {
         let mut controller = AnimationController::new();
 
         for (name, clip_config) in config.clips {
             let clip = AnimationClip::try_from(clip_config).map_err(|e| {
-                format!("Failed to create animation clip '{}': {}", name, e)
+                AnimationError::CreationFailed(format!(
+                    "Failed to create animation clip '{}': {}",
+                    name, e
+                ))
             })?;
             controller.add_animation(name, clip);
         }

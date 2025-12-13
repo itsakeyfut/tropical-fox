@@ -7,6 +7,7 @@ use bevy::prelude::*;
 mod components;
 mod config;
 mod debug;
+mod error;
 mod events;
 mod game_state;
 mod plugins;

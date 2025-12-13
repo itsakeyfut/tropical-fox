@@ -2,6 +2,7 @@
 
 use bevy::prelude::*;
 use std::collections::HashMap;
+use crate::error::AnimationError;
 
 /// An animation clip defines a range of frames and playback speed
 #[derive(Clone, Debug)]
@@ -22,15 +23,16 @@ impl AnimationClip {
     /// Returns an error if:
     /// - `first_frame > last_frame`
     /// - `fps <= 0.0`
-    pub fn new(first_frame: usize, last_frame: usize, fps: f32) -> Result<Self, String> {
+    pub fn new(first_frame: usize, last_frame: usize, fps: f32) -> Result<Self, AnimationError> {
         if first_frame > last_frame {
-            return Err(format!(
-                "first_frame ({}) must be <= last_frame ({})",
-                first_frame, last_frame
+            return Err(AnimationError::invalid_frame_range(
+                first_frame,
+                last_frame,
+                format!("first_frame ({}) must be <= last_frame ({})", first_frame, last_frame),
             ));
         }
         if fps <= 0.0 {
-            return Err(format!("fps must be positive, got {}", fps));
+            return Err(AnimationError::invalid_fps(fps, "fps must be positive"));
         }
         Ok(Self {
             first_frame,
@@ -251,16 +253,17 @@ mod tests {
         assert!(result.is_err());
         assert!(result
             .unwrap_err()
+            .to_string()
             .contains("first_frame (10) must be <= last_frame (5)"));
 
         // Test invalid fps
         let result = AnimationClip::new(0, 5, 0.0);
         assert!(result.is_err());
-        assert!(result.unwrap_err().contains("fps must be positive"));
+        assert!(result.unwrap_err().to_string().contains("fps must be positive"));
 
         let result = AnimationClip::new(0, 5, -1.0);
         assert!(result.is_err());
-        assert!(result.unwrap_err().contains("fps must be positive"));
+        assert!(result.unwrap_err().to_string().contains("fps must be positive"));
 
         // Test valid clip
         let result = AnimationClip::new(0, 5, 10.0);
