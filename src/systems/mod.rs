@@ -2,9 +2,11 @@
 //!
 //! This module will contain all ECS systems used throughout the game.
 
+pub mod animation;
 pub mod physics;
 pub mod player;
 
+pub use animation::{player_animation_controller, process_animation_events, update_animations};
 pub use physics::{apply_gravity, update_position};
 pub use player::{
     flip_sprite_by_facing, ground_collision, player_dash, player_horizontal_movement, player_jump,

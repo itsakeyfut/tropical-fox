@@ -1,0 +1,27 @@
+// Character definitions and configuration
+// This file manages all playable characters, enemies, and NPCs
+(
+    characters: {
+        // Playable Characters
+        "fox": (
+            id: "fox",
+            name: "Fox",
+            character_type: Player,
+            animation_config_path: "graphics/characters/players/fox/fox_animations.ron",
+            description: "A clever and agile fox with quick reflexes",
+        ),
+        // Add more playable characters here as needed
+
+        // Enemy Characters (for future use)
+        "slime": (
+            id: "slime",
+            name: "Slime",
+            character_type: Enemy,
+            animation_config_path: "graphics/characters/enemies/slime/slime_animations.ron",
+            description: "A bouncy slime enemy",
+        ),
+    },
+
+    // Default character for new players
+    default_player: "fox",
+)
