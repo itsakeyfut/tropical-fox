@@ -52,6 +52,7 @@ impl TryFrom<AnimationConfig> for AnimationController {
 
     fn try_from(config: AnimationConfig) -> Result<Self, Self::Error> {
         let mut controller = AnimationController::new();
+        let default_animation = config.default_animation.clone();
 
         for (name, clip_config) in config.clips {
             let clip = AnimationClip::try_from(clip_config).map_err(|e| {
@@ -63,7 +64,13 @@ impl TryFrom<AnimationConfig> for AnimationController {
             controller.add_animation(name, clip);
         }
 
-        controller.current_animation = config.default_animation.clone();
+        if !controller.animations.contains_key(&default_animation) {
+            return Err(AnimationError::CreationFailed(format!(
+                "default_animation '{}' is not present in clips",
+                default_animation
+            )));
+        }
+        controller.current_animation = default_animation;
 
         Ok(controller)
     }
@@ -88,7 +95,12 @@ pub fn load_animation_config<P: AsRef<Path>>(
     Ok(config)
 }
 
-/// Load animation configuration from a RON file, or return None if file doesn't exist
+/// Load animation configuration from a RON file, or return None on any error
+///
+/// This function will return None for any loading or parsing errors, including:
+/// - File does not exist
+/// - File cannot be read (permission errors, etc.)
+/// - File contains invalid RON syntax
 pub fn load_animation_config_optional<P: AsRef<Path>>(path: P) -> Option<AnimationConfig> {
     match load_animation_config(path) {
         Ok(config) => Some(config),

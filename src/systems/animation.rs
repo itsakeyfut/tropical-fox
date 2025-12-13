@@ -89,8 +89,13 @@ pub fn player_animation_controller(
 }
 
 /// Process animation events that should trigger on specific frames
-pub fn process_animation_events(query: Query<(&AnimationState, &AnimationEvents)>) {
-    for (state, events) in &query {
+pub fn process_animation_events(mut query: Query<(&mut AnimationState, &AnimationEvents)>) {
+    for (mut state, events) in &mut query {
+        // Only process events if we've moved to a new frame
+        if state.last_event_frame == Some(state.current_frame) {
+            continue;
+        }
+
         // Check if there are events for the current frame
         if let Some(frame_events) = events.get_events(state.current_frame) {
             for event in frame_events {
@@ -109,6 +114,9 @@ pub fn process_animation_events(query: Query<(&AnimationState, &AnimationEvents)
                 }
             }
         }
+
+        // Mark this frame as processed
+        state.last_event_frame = Some(state.current_frame);
     }
 }
 

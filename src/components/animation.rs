@@ -22,6 +22,7 @@ impl AnimationClip {
     ///
     /// Returns an error if:
     /// - `first_frame > last_frame`
+    /// - `fps` is not finite (NaN or Infinity)
     /// - `fps <= 0.0`
     pub fn new(first_frame: usize, last_frame: usize, fps: f32) -> Result<Self, AnimationError> {
         if first_frame > last_frame {
@@ -31,8 +32,8 @@ impl AnimationClip {
                 format!("first_frame ({}) must be <= last_frame ({})", first_frame, last_frame),
             ));
         }
-        if fps <= 0.0 {
-            return Err(AnimationError::invalid_fps(fps, "fps must be positive"));
+        if !fps.is_finite() || fps <= 0.0 {
+            return Err(AnimationError::invalid_fps(fps, "fps must be positive and finite"));
         }
         Ok(Self {
             first_frame,
@@ -73,11 +74,11 @@ impl AnimationController {
         self.animations.insert(name.into(), clip);
     }
 
-    /// Play an animation by name, restarting if it's a different animation
+    /// Play an animation by name, restarting if it's a different animation or if the current animation is stopped
     pub fn play(&mut self, animation: &str, state: &mut AnimationState) {
         if let Some(clip) = self.animations.get(animation) {
-            // Only restart if switching to a different animation
-            if self.current_animation != animation {
+            // Restart if switching to a different animation or if the current animation is stopped
+            if self.current_animation != animation || !state.playing {
                 self.previous_animation = self.current_animation.clone();
                 self.current_animation = animation.to_string();
                 state.current_frame = clip.first_frame;
@@ -147,6 +148,8 @@ pub struct AnimationState {
     pub playing: bool,
     /// Whether the animation should loop when it reaches the end
     pub looping: bool,
+    /// Last frame on which events were processed (to prevent duplicate event firing)
+    pub last_event_frame: Option<usize>,
 }
 
 impl AnimationState {
@@ -157,6 +160,7 @@ impl AnimationState {
             timer: Timer::from_seconds(1.0 / fps, TimerMode::Repeating),
             playing: false,
             looping,
+            last_event_frame: None,
         }
     }
 
@@ -165,6 +169,7 @@ impl AnimationState {
         self.current_frame = 0;
         self.timer.reset();
         self.playing = true;
+        self.last_event_frame = None;
     }
 }
 
