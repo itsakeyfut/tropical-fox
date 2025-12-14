@@ -1,0 +1,21 @@
+// Bear enemy animation configuration
+// Spritesheet: 216x63 pixels, 4 frames = 54x63 per frame
+(
+    spritesheet_path: "graphics/characters/enemies/bear/spritesheets/run.png",
+    sprite_size: (54, 63),
+    columns: 4,
+    rows: 1,
+    clips: {
+        "run": (
+            first: 0,
+            last: 3,
+            fps: 8.0,
+        ),
+        "idle": (
+            first: 0,
+            last: 0,
+            fps: 1.0,
+        ),
+    },
+    default_animation: "run",
+)

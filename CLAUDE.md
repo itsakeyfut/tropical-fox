@@ -60,7 +60,9 @@ src/
 ### Configuration System
 Game data is defined in RON files under `assets/config/`:
 - `game_settings.ron` - Window, physics, player movement parameters
-- `characters.ron` - Character definitions and animations
+- `players.ron` - Player character definitions and animation paths
+- `bosses.ron` - Boss character definitions and animation paths
+- `enemies.ron` - Enemy type definitions with stats, AI, and behaviors
 - `animation/*.ron` - Animation clip definitions
 
 RON reference guide: `memo/ron_format_guide.md`

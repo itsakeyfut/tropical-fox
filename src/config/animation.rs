@@ -2,8 +2,7 @@
 //!
 //! Defines the format for animation configuration files (RON)
 
-use crate::components::{AnimationClip, AnimationController};
-use crate::error::AnimationError;
+use crate::components::{AnimationClip, AnimationController, AnimationError};
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;

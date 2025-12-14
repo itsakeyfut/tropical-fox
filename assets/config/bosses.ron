@@ -1,0 +1,13 @@
+// Boss character definitions
+// Defines boss characters with their animation configurations
+(
+    bosses: {
+        "sunny_dragon": (
+            id: "sunny_dragon",
+            name: "Sunny Dragon",
+            animation_config_path: "graphics/characters/bosses/sunny_dragon/sunny_dragon_animations.ron",
+            description: "A fearsome dragon with fiery breath",
+        ),
+        // Add more boss characters here as needed
+    },
+)

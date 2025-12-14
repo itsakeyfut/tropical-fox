@@ -3,7 +3,9 @@
 //! This module handles loading and managing game configuration.
 
 pub mod animation;
-pub mod characters;
+pub mod bosses;
+pub mod enemies;
+pub mod players;
 
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -12,10 +14,12 @@ use std::path::Path;
 use thiserror::Error;
 
 pub use animation::load_animation_config_optional;
-pub use characters::{
-    CharacterDefinition, CharacterType, CharactersConfig, SelectedCharacter,
-    load_characters_config_optional,
+pub use bosses::{BossesConfig, load_bosses_config_optional};
+pub use enemies::{
+    AIBehaviorType, AIConfig, EnemiesConfig, EnemyTypeConfig, FlyingPatternConfig,
+    load_enemies_config_optional,
 };
+pub use players::{PlayersConfig, SelectedCharacter, load_players_config_optional};
 
 /// Physics settings
 #[derive(Debug, Clone, Serialize, Deserialize)]

@@ -10,7 +10,7 @@ use crate::components::{
     PlayerStats, Velocity,
 };
 use crate::config::{
-    SelectedCharacter, load_animation_config_optional, load_characters_config_optional,
+    SelectedCharacter, load_animation_config_optional, load_players_config_optional,
 };
 use crate::game_state::GameState;
 use crate::resources::CharacterAssets;
@@ -104,22 +104,22 @@ fn spawn_player(
 
     info!("Spawning player with character: {}", character_id);
 
-    // Load character configuration
-    let characters_config = load_characters_config_optional("assets/config/characters.ron");
+    // Load player configuration
+    let players_config = load_players_config_optional("assets/config/players.ron");
 
-    // Get animation config path from character definition
-    let animation_config_path = if let Some(config) = characters_config {
-        if let Ok(character) = config.get_character(character_id) {
-            format!("assets/{}", character.animation_config_path)
+    // Get animation config path from player definition
+    let animation_config_path = if let Some(config) = players_config {
+        if let Ok(player) = config.get_player(character_id) {
+            format!("assets/{}", player.animation_config_path)
         } else {
             warn!(
-                "Character '{}' not found in characters.ron, using default",
+                "Player '{}' not found in players.ron, using default",
                 character_id
             );
             "assets/graphics/characters/players/fox/fox_animations.ron".to_string()
         }
     } else {
-        warn!("Could not load characters.ron, using default fox animation config");
+        warn!("Could not load players.ron, using default fox animation config");
         "assets/graphics/characters/players/fox/fox_animations.ron".to_string()
     };
 
@@ -324,22 +324,5 @@ pub fn spawn_test_walls(mut commands: Commands) {
         Name::new("Middle Platform"),
     ));
 
-    // Test enemy for combat testing
-    let enemy_size = Vec2::new(48.0, 48.0);
-    commands.spawn((
-        Transform::from_xyz(150.0, 50.0, 0.0),
-        Visibility::default(),
-        Sprite {
-            color: Color::srgb(0.8, 0.2, 0.2), // Red enemy
-            custom_size: Some(enemy_size),
-            ..default()
-        },
-        Health::new(30.0),
-        EnemyHealth,
-        Collider::new(enemy_size),
-        Name::new("Test Enemy"),
-    ));
-
     info!("Test walls spawned at positions (-350, 50) and (350, 50)");
-    info!("Test enemy spawned at position (150, 50)");
 }

@@ -1,0 +1,22 @@
+// Bat enemy animation configuration
+// Fly: frames 0-2, Idle: frames 3-6
+// Spritesheet: 371x57 pixels, 7 frames = 53x57 per frame
+(
+    spritesheet_path: "graphics/characters/enemies/bat/spritesheets/fly_idle.png",
+    sprite_size: (53, 57),
+    columns: 7,
+    rows: 1,
+    clips: {
+        "fly": (
+            first: 0,
+            last: 2,
+            fps: 10.0,
+        ),
+        "idle": (
+            first: 3,
+            last: 6,
+            fps: 6.0,
+        ),
+    },
+    default_animation: "fly",
+)

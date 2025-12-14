@@ -8,7 +8,6 @@ mod combat;
 mod components;
 mod config;
 mod debug;
-mod error;
 mod events;
 mod game_state;
 mod plugins;
@@ -16,20 +15,19 @@ mod resources;
 mod systems;
 
 use combat::CombatPlugin;
-use config::{SelectedCharacter, load_characters_config_optional, load_settings_or_default};
-use plugins::{AnimationPlugin, CorePlugin, PlayerPlugin};
+use config::{SelectedCharacter, load_players_config_optional, load_settings_or_default};
+use plugins::{AnimationPlugin, CorePlugin, EnemyPlugin, PlayerPlugin};
 
 fn main() {
     let settings = load_settings_or_default("assets/config/game_settings.ron");
 
-    // Load character configuration and set selected character
-    let selected_character = if let Some(characters_config) =
-        load_characters_config_optional("assets/config/characters.ron")
-    {
-        SelectedCharacter::new(characters_config.default_player.clone())
-    } else {
-        SelectedCharacter::default()
-    };
+    // Load player configuration and set selected character
+    let selected_character =
+        if let Some(players_config) = load_players_config_optional("assets/config/players.ron") {
+            SelectedCharacter::new(players_config.default_player.clone())
+        } else {
+            SelectedCharacter::default()
+        };
 
     App::new()
         .add_plugins(
@@ -47,6 +45,12 @@ fn main() {
         )
         .insert_resource(settings)
         .insert_resource(selected_character)
-        .add_plugins((CorePlugin, AnimationPlugin, PlayerPlugin, CombatPlugin))
+        .add_plugins((
+            CorePlugin,
+            AnimationPlugin,
+            PlayerPlugin,
+            CombatPlugin,
+            EnemyPlugin,
+        ))
         .run();
 }

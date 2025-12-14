@@ -1,0 +1,16 @@
+// Player character definitions
+// Defines playable characters with their animation configurations
+(
+    players: {
+        "fox": (
+            id: "fox",
+            name: "Fox",
+            animation_config_path: "graphics/characters/players/fox/fox_animations.ron",
+            description: "A clever and agile fox with quick reflexes",
+        ),
+        // Add more playable characters here as needed
+    },
+
+    // Default character for new players
+    default_player: "fox",
+)
