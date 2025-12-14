@@ -3,6 +3,7 @@
 //! This module will contain all ECS resources used throughout the game.
 
 use bevy::prelude::*;
+use std::collections::HashMap;
 
 /// Physics configuration resource
 #[derive(Resource, Debug)]
@@ -23,21 +24,49 @@ impl Default for PhysicsConfig {
     }
 }
 
+/// Texture atlas data for a single character
+#[derive(Debug, Clone)]
+pub struct CharacterTextureAtlas {
+    /// Handle to the character's sprite texture
+    pub texture: Handle<Image>,
+    /// Handle to the character's texture atlas layout
+    pub layout: Handle<TextureAtlasLayout>,
+}
+
+impl CharacterTextureAtlas {
+    /// Create new character texture atlas with the given handles
+    pub fn new(texture: Handle<Image>, layout: Handle<TextureAtlasLayout>) -> Self {
+        Self { texture, layout }
+    }
+}
+
 /// Character sprite assets (texture atlas layouts and textures)
-#[derive(Resource, Debug)]
+#[derive(Resource, Debug, Default)]
 pub struct CharacterAssets {
-    /// Handle to the fox character's texture atlas layout
-    pub fox_layout: Handle<TextureAtlasLayout>,
-    /// Handle to the fox character's sprite texture
-    pub fox_texture: Handle<Image>,
+    /// Map of character ID to texture atlas data
+    pub characters: HashMap<String, CharacterTextureAtlas>,
 }
 
 impl CharacterAssets {
-    /// Create new character assets with the given handles
-    pub fn new(fox_layout: Handle<TextureAtlasLayout>, fox_texture: Handle<Image>) -> Self {
+    /// Create new empty character assets
+    pub fn new() -> Self {
         Self {
-            fox_layout,
-            fox_texture,
+            characters: HashMap::new(),
         }
+    }
+
+    /// Insert a character's texture atlas data
+    pub fn insert(&mut self, character_id: impl Into<String>, atlas: CharacterTextureAtlas) {
+        self.characters.insert(character_id.into(), atlas);
+    }
+
+    /// Get a character's texture atlas data by ID
+    pub fn get(&self, character_id: &str) -> Option<&CharacterTextureAtlas> {
+        self.characters.get(character_id)
+    }
+
+    /// Get the default character's texture atlas data (fox)
+    pub fn get_default(&self) -> Option<&CharacterTextureAtlas> {
+        self.characters.get("fox")
     }
 }
