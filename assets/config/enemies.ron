@@ -7,6 +7,7 @@
             id: "ant",
             name: "Ant",
             description: "A small but aggressive ant that patrols its territory",
+            animation_config_path: "graphics/characters/enemies/ant/ant_animations.ron",
             stats: (
                 health: 15.0,
                 move_speed: 50.0,
@@ -38,6 +39,7 @@
             id: "bat",
             name: "Bat",
             description: "A flying bat with erratic movement patterns",
+            animation_config_path: "graphics/characters/enemies/bat/bat_animations.ron",
             stats: (
                 health: 20.0,
                 move_speed: 40.0,
@@ -72,6 +74,7 @@
             id: "bear",
             name: "Bear",
             description: "A large bear that chases intruders",
+            animation_config_path: "graphics/characters/enemies/bear/bear_animations.ron",
             stats: (
                 health: 60.0,
                 move_speed: 45.0,
@@ -103,6 +106,7 @@
             id: "piranha",
             name: "Piranha",
             description: "A dangerous piranha that shoots projectiles",
+            animation_config_path: "graphics/characters/enemies/piranha/piranha_animations.ron",
             stats: (
                 health: 25.0,
                 move_speed: 0.0,

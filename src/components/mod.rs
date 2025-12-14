@@ -8,7 +8,8 @@ pub mod enemy;
 use bevy::prelude::*;
 
 pub use animation::{
-    AnimationClip, AnimationController, AnimationEvent, AnimationEvents, AnimationState,
+    AnimationClip, AnimationController, AnimationError, AnimationEvent, AnimationEvents,
+    AnimationState,
 };
 pub use enemy::{
     ChaseAI, ContactDamage, Enemy, EnemyAI, EnemyProjectile, EnemyStats, FlyingAI, FlyingPattern,
