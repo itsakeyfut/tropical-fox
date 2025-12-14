@@ -153,6 +153,15 @@ fn load_character_asset(
             return false;
         };
 
+    // Validate atlas grid parameters to prevent invalid texture atlas creation
+    if sprite_size.x == 0 || sprite_size.y == 0 || columns == 0 || rows == 0 {
+        warn!(
+            "Invalid atlas grid for '{}' ({}): sprite={}x{}, columns={}, rows={}. Skipping.",
+            character_id, full_path, sprite_size.x, sprite_size.y, columns, rows
+        );
+        return false;
+    }
+
     // Load the sprite sheet texture
     let texture = asset_server.load(&spritesheet_path);
 
