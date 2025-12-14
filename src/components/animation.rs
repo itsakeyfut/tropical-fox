@@ -1,8 +1,75 @@
 //! Animation components for sprite-based animation system
 
-use crate::error::AnimationError;
 use bevy::prelude::*;
 use std::collections::HashMap;
+use thiserror::Error;
+
+/// Errors related to animation system operations
+///
+/// These errors occur during animation clip creation, validation, or playback.
+/// The game should handle these by falling back to default animations to maintain
+/// visual continuity even when animation data is invalid.
+#[derive(Debug, Error)]
+pub enum AnimationError {
+    /// Animation clip name not found in controller's clip map
+    #[error("Animation clip not found: {name}")]
+    ClipNotFound { name: String },
+
+    /// General animation clip validation failure
+    #[error("Invalid animation clip: {reason}")]
+    InvalidClip { reason: String },
+
+    /// Animation state machine or playback state is inconsistent
+    #[error("Animation state error: {0}")]
+    StateError(String),
+
+    /// Failed to construct animation from config or other source
+    #[error("Failed to create animation: {0}")]
+    CreationFailed(String),
+
+    /// Frame range is invalid (first > last, negative values, etc.)
+    #[error("Invalid frame range: first={first}, last={last}. {reason}")]
+    InvalidFrameRange {
+        first: usize,
+        last: usize,
+        reason: String,
+    },
+
+    /// FPS (frames per second) value is invalid (≤ 0, NaN, infinity)
+    #[error("Invalid FPS value: {fps}. {reason}")]
+    InvalidFps { fps: f32, reason: String },
+}
+
+impl AnimationError {
+    /// Construct an error for a missing animation clip
+    pub fn clip_not_found(name: impl Into<String>) -> Self {
+        AnimationError::ClipNotFound { name: name.into() }
+    }
+
+    /// Construct a general invalid clip error
+    pub fn invalid_clip(reason: impl Into<String>) -> Self {
+        AnimationError::InvalidClip {
+            reason: reason.into(),
+        }
+    }
+
+    /// Construct an error for invalid frame range with detailed context
+    pub fn invalid_frame_range(first: usize, last: usize, reason: impl Into<String>) -> Self {
+        AnimationError::InvalidFrameRange {
+            first,
+            last,
+            reason: reason.into(),
+        }
+    }
+
+    /// Construct an error for invalid FPS value with context
+    pub fn invalid_fps(fps: f32, reason: impl Into<String>) -> Self {
+        AnimationError::InvalidFps {
+            fps,
+            reason: reason.into(),
+        }
+    }
+}
 
 /// An animation clip defines a range of frames and playback speed
 #[derive(Clone, Debug)]

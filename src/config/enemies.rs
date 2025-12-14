@@ -247,6 +247,9 @@ pub struct EnemyTypeConfig {
     /// Description
     #[serde(default)]
     pub description: String,
+    /// Path to the animation config file (relative to assets directory)
+    #[serde(default)]
+    pub animation_config_path: String,
     /// Enemy statistics
     #[serde(default)]
     pub stats: EnemyStatsConfig,
@@ -277,6 +280,7 @@ impl Default for EnemyTypeConfig {
             id: "unknown".to_string(),
             name: "Unknown Enemy".to_string(),
             description: String::new(),
+            animation_config_path: String::new(),
             stats: EnemyStatsConfig::default(),
             ai: AIConfig::default(),
             collider: ColliderConfig::default(),
