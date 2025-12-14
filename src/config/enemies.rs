@@ -213,18 +213,26 @@ impl Default for ProjectileConfig {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct DropConfig {
     /// Chance to drop an item (0.0 to 1.0)
-    #[serde(default)]
+    #[serde(default = "default_drop_chance")]
     pub drop_chance: f32,
     /// List of possible drop item types
-    #[serde(default)]
+    #[serde(default = "default_drop_items")]
     pub items: Vec<String>,
+}
+
+fn default_drop_chance() -> f32 {
+    0.3
+}
+
+fn default_drop_items() -> Vec<String> {
+    vec!["coin".to_string()]
 }
 
 impl Default for DropConfig {
     fn default() -> Self {
         Self {
-            drop_chance: 0.3,
-            items: vec!["coin".to_string()],
+            drop_chance: default_drop_chance(),
+            items: default_drop_items(),
         }
     }
 }
@@ -323,7 +331,7 @@ pub fn load_enemies_config<P: AsRef<Path>>(path: P) -> Result<EnemiesConfig, Ene
     Ok(config)
 }
 
-/// Load enemies configuration from a RON file, or return default if file doesn't exist
+/// Load enemies configuration from a RON file, or return default if loading/parsing fails
 pub fn load_enemies_config_optional<P: AsRef<Path>>(path: P) -> EnemiesConfig {
     match load_enemies_config(path) {
         Ok(config) => {

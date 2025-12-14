@@ -85,6 +85,12 @@ pub struct PatrolAI {
 impl PatrolAI {
     /// Create a new patrol AI with the given waypoints
     pub fn new(patrol_points: Vec<Vec2>, wait_time: f32, origin: Vec2) -> Self {
+        // Prefer graceful degradation over panics in gameplay code.
+        let patrol_points = if patrol_points.is_empty() {
+            vec![Vec2::ZERO]
+        } else {
+            patrol_points
+        };
         Self {
             patrol_points,
             current_point_index: 0,
