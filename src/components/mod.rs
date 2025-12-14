@@ -3,11 +3,16 @@
 //! This module will contain all ECS components used throughout the game.
 
 pub mod animation;
+pub mod enemy;
 
 use bevy::prelude::*;
 
 pub use animation::{
     AnimationClip, AnimationController, AnimationEvent, AnimationEvents, AnimationState,
+};
+pub use enemy::{
+    ChaseAI, ContactDamage, Enemy, EnemyAI, EnemyProjectile, EnemyStats, FlyingAI, FlyingPattern,
+    PatrolAI, ProjectileShooter,
 };
 
 /// Velocity component for entities that move

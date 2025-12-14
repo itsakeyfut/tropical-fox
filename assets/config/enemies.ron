@@ -1,0 +1,134 @@
+// Enemy type definitions
+// Each enemy type has unique stats, AI behavior, and configuration
+(
+    enemies: {
+        // Ant - Small patrol enemy
+        "ant": (
+            id: "ant",
+            name: "Ant",
+            description: "A small but aggressive ant that patrols its territory",
+            stats: (
+                health: 15.0,
+                move_speed: 50.0,
+                damage: 5.0,
+                knockback_force: 80.0,
+                score_value: 50,
+            ),
+            ai: (
+                behavior: Patrol,
+                patrol_distance: 60.0,
+                wait_time: 0.5,
+            ),
+            collider: (
+                size: (37.0, 31.0),
+                offset: (0.0, 0.0),
+            ),
+            projectile: (
+                enabled: false,
+            ),
+            drop: (
+                drop_chance: 0.2,
+                items: ["coin"],
+            ),
+            has_gravity: true,
+        ),
+
+        // Bat - Flying sine wave enemy
+        "bat": (
+            id: "bat",
+            name: "Bat",
+            description: "A flying bat with erratic movement patterns",
+            stats: (
+                health: 20.0,
+                move_speed: 40.0,
+                damage: 8.0,
+                knockback_force: 100.0,
+                score_value: 100,
+            ),
+            ai: (
+                behavior: Flying,
+                flying_pattern: Some(SineWave(
+                    amplitude: 30.0,
+                    frequency: 2.5,
+                    speed: 50.0,
+                )),
+            ),
+            collider: (
+                size: (53.0, 57.0),
+                offset: (0.0, 0.0),
+            ),
+            projectile: (
+                enabled: false,
+            ),
+            drop: (
+                drop_chance: 0.25,
+                items: ["coin"],
+            ),
+            has_gravity: false,
+        ),
+
+        // Bear - Large chase enemy
+        "bear": (
+            id: "bear",
+            name: "Bear",
+            description: "A large bear that chases intruders",
+            stats: (
+                health: 60.0,
+                move_speed: 45.0,
+                damage: 20.0,
+                knockback_force: 200.0,
+                score_value: 200,
+            ),
+            ai: (
+                behavior: Chase,
+                detection_range: 180.0,
+                attack_range: 40.0,
+            ),
+            collider: (
+                size: (54.0, 63.0),
+                offset: (0.0, 0.0),
+            ),
+            projectile: (
+                enabled: false,
+            ),
+            drop: (
+                drop_chance: 0.5,
+                items: ["coin", "health_potion"],
+            ),
+            has_gravity: true,
+        ),
+
+        // Piranha - Projectile shooting enemy
+        "piranha": (
+            id: "piranha",
+            name: "Piranha",
+            description: "A dangerous piranha that shoots projectiles",
+            stats: (
+                health: 25.0,
+                move_speed: 0.0,
+                damage: 5.0,
+                knockback_force: 80.0,
+                score_value: 150,
+            ),
+            ai: (
+                behavior: Idle,
+            ),
+            collider: (
+                size: (61.0, 45.0),
+                offset: (0.0, 0.0),
+            ),
+            projectile: (
+                enabled: true,
+                damage: 8.0,
+                speed: 180.0,
+                fire_rate: 2.0,
+                range: 300.0,
+            ),
+            drop: (
+                drop_chance: 0.4,
+                items: ["coin", "health_potion"],
+            ),
+            has_gravity: true,
+        ),
+    }
+)

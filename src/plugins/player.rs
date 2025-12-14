@@ -324,22 +324,5 @@ pub fn spawn_test_walls(mut commands: Commands) {
         Name::new("Middle Platform"),
     ));
 
-    // Test enemy for combat testing
-    let enemy_size = Vec2::new(48.0, 48.0);
-    commands.spawn((
-        Transform::from_xyz(150.0, 50.0, 0.0),
-        Visibility::default(),
-        Sprite {
-            color: Color::srgb(0.8, 0.2, 0.2), // Red enemy
-            custom_size: Some(enemy_size),
-            ..default()
-        },
-        Health::new(30.0),
-        EnemyHealth,
-        Collider::new(enemy_size),
-        Name::new("Test Enemy"),
-    ));
-
     info!("Test walls spawned at positions (-350, 50) and (350, 50)");
-    info!("Test enemy spawned at position (150, 50)");
 }

@@ -1,0 +1,16 @@
+// Piranha enemy animation configuration
+// Spritesheet: 305x45 pixels, 5 frames = 61x45 per frame
+(
+    spritesheet_path: "graphics/characters/enemies/piranha/spritesheets/idle.png",
+    sprite_size: (61, 45),
+    columns: 5,
+    rows: 1,
+    clips: {
+        "idle": (
+            first: 0,
+            last: 4,
+            fps: 8.0,
+        ),
+    },
+    default_animation: "idle",
+)

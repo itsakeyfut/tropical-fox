@@ -4,8 +4,10 @@
 
 pub mod animation;
 pub mod core;
+pub mod enemy;
 pub mod player;
 
 pub use animation::AnimationPlugin;
 pub use core::CorePlugin;
+pub use enemy::EnemyPlugin;
 pub use player::PlayerPlugin;

@@ -26,13 +26,34 @@
         },
 
         "enemies": {
-            // Enemy Characters (for future use)
-            "slime": (
-                id: "slime",
-                name: "Slime",
+            // Enemy Characters
+            "ant": (
+                id: "ant",
+                name: "Ant",
                 character_type: Enemy,
-                animation_config_path: "graphics/characters/enemies/slime/slime_animations.ron",
-                description: "A bouncy slime enemy",
+                animation_config_path: "graphics/characters/enemies/ant/ant_animations.ron",
+                description: "A small but aggressive ant that patrols its territory",
+            ),
+            "bat": (
+                id: "bat",
+                name: "Bat",
+                character_type: Enemy,
+                animation_config_path: "graphics/characters/enemies/bat/bat_animations.ron",
+                description: "A flying bat with erratic movement patterns",
+            ),
+            "bear": (
+                id: "bear",
+                name: "Bear",
+                character_type: Enemy,
+                animation_config_path: "graphics/characters/enemies/bear/bear_animations.ron",
+                description: "A large bear that chases intruders",
+            ),
+            "piranha": (
+                id: "piranha",
+                name: "Piranha",
+                character_type: Enemy,
+                animation_config_path: "graphics/characters/enemies/piranha/piranha_animations.ron",
+                description: "A dangerous piranha that shoots projectiles",
             ),
         }
     },

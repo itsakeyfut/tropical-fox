@@ -17,7 +17,7 @@ mod systems;
 
 use combat::CombatPlugin;
 use config::{SelectedCharacter, load_characters_config_optional, load_settings_or_default};
-use plugins::{AnimationPlugin, CorePlugin, PlayerPlugin};
+use plugins::{AnimationPlugin, CorePlugin, EnemyPlugin, PlayerPlugin};
 
 fn main() {
     let settings = load_settings_or_default("assets/config/game_settings.ron");
@@ -47,6 +47,12 @@ fn main() {
         )
         .insert_resource(settings)
         .insert_resource(selected_character)
-        .add_plugins((CorePlugin, AnimationPlugin, PlayerPlugin, CombatPlugin))
+        .add_plugins((
+            CorePlugin,
+            AnimationPlugin,
+            PlayerPlugin,
+            CombatPlugin,
+            EnemyPlugin,
+        ))
         .run();
 }

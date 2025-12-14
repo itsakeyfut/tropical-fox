@@ -4,6 +4,7 @@
 
 pub mod animation;
 pub mod characters;
+pub mod enemies;
 
 use bevy::prelude::*;
 use serde::{Deserialize, Serialize};
@@ -12,9 +13,10 @@ use std::path::Path;
 use thiserror::Error;
 
 pub use animation::load_animation_config_optional;
-pub use characters::{
-    CharacterDefinition, CharacterType, CharactersConfig, SelectedCharacter,
-    load_characters_config_optional,
+pub use characters::{SelectedCharacter, load_characters_config_optional};
+pub use enemies::{
+    AIBehaviorType, AIConfig, EnemiesConfig, EnemyTypeConfig, FlyingPatternConfig,
+    load_enemies_config_optional,
 };
 
 /// Physics settings
