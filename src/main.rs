@@ -4,6 +4,7 @@
 
 use bevy::prelude::*;
 
+mod combat;
 mod components;
 mod config;
 mod debug;
@@ -14,6 +15,7 @@ mod plugins;
 mod resources;
 mod systems;
 
+use combat::CombatPlugin;
 use config::{SelectedCharacter, load_characters_config_optional, load_settings_or_default};
 use plugins::{AnimationPlugin, CorePlugin, PlayerPlugin};
 
@@ -45,6 +47,6 @@ fn main() {
         )
         .insert_resource(settings)
         .insert_resource(selected_character)
-        .add_plugins((CorePlugin, AnimationPlugin, PlayerPlugin))
+        .add_plugins((CorePlugin, AnimationPlugin, PlayerPlugin, CombatPlugin))
         .run();
 }

@@ -34,9 +34,9 @@
 use thiserror::Error;
 
 // Import existing Config error types
+use crate::config::ConfigError;
 use crate::config::animation::AnimationConfigError;
 use crate::config::characters::CharacterConfigError;
-use crate::config::ConfigError;
 
 /// Top-level error type that unifies all subsystem errors
 ///
