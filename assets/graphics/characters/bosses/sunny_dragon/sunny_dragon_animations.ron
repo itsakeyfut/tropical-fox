@@ -1,0 +1,32 @@
+// Sunny Dragon boss character animation configuration
+// This file defines sprite sheet layout and animation clips for the dragon boss
+(
+    // Path to the sprite sheet texture (relative to assets directory)
+    spritesheet_path: "graphics/characters/bosses/sunny_dragon/spritesheets/fly.png",
+
+    // Size of each sprite frame in pixels (width, height)
+    // The dragon sprites are larger than player characters
+    sprite_size: (160, 128),
+
+    // Sprite sheet grid dimensions
+    // Single row layout with 10 frames
+    columns: 10,
+    rows: 1,
+
+    // Animation clips definition
+    // Each clip defines a range of frames and playback speed
+    clips: {
+        "fly": (
+            first: 0,
+            last: 9,
+            fps: 12.0,
+        ),
+        "idle": (
+            first: 0,
+            last: 9,
+            fps: 8.0,
+        ),
+    },
+
+    default_animation: "idle",
+)

@@ -143,71 +143,115 @@ fn spawn_player(
 
     // Check if we have character assets loaded
     if let Some(assets) = character_assets {
-        // Spawn with texture atlas
-        let mut entity = commands.spawn(Transform::from_xyz(0.0, 100.0, 0.0));
-
-        entity.insert(Visibility::default());
-        entity.insert(Sprite {
-            image: assets.fox_texture.clone(),
-            texture_atlas: Some(TextureAtlas {
-                layout: assets.fox_layout.clone(),
-                index: 0,
-            }),
-            custom_size: Some(player_size),
-            ..default()
+        // Get assets for the selected character, falling back to default if not found
+        let character_atlas = assets.get(character_id).or_else(|| {
+            warn!(
+                "Assets for '{}' not found, using default (fox)",
+                character_id
+            );
+            assets.get_default()
         });
-        entity.insert(Name::new("Player"));
 
-        entity.insert(Player::default());
-        entity.insert(PlayerStats::from(settings.player.clone()));
-        entity.insert(GroundDetection::default());
+        if let Some(atlas) = character_atlas {
+            // Spawn with texture atlas
+            let mut entity = commands.spawn(Transform::from_xyz(0.0, 100.0, 0.0));
 
-        entity.insert(Velocity::zero());
-        entity.insert(Gravity::default());
-        entity.insert(Collider::new(player_size));
+            entity.insert(Visibility::default());
+            entity.insert(Sprite {
+                image: atlas.texture.clone(),
+                texture_atlas: Some(TextureAtlas {
+                    layout: atlas.layout.clone(),
+                    index: 0,
+                }),
+                custom_size: Some(player_size),
+                ..default()
+            });
+            entity.insert(Name::new("Player"));
 
-        entity.insert(animation_controller);
-        entity.insert(animation_state);
+            entity.insert(Player::default());
+            entity.insert(PlayerStats::from(settings.player.clone()));
+            entity.insert(GroundDetection::default());
 
-        // Combat components
-        entity.insert(Health::new(100.0));
-        entity.insert(PlayerHealth);
-        entity.insert(Lives::new(3));
-        entity.insert(AttackCooldown::default());
+            entity.insert(Velocity::zero());
+            entity.insert(Gravity::default());
+            entity.insert(Collider::new(player_size));
 
-        info!("Player spawned at position (0, 100) with texture atlas animation");
+            entity.insert(animation_controller);
+            entity.insert(animation_state);
+
+            // Combat components
+            entity.insert(Health::new(100.0));
+            entity.insert(PlayerHealth);
+            entity.insert(Lives::new(3));
+            entity.insert(AttackCooldown::default());
+
+            info!(
+                "Player spawned at position (0, 100) with character '{}' texture atlas",
+                character_id
+            );
+        } else {
+            // Fallback to colored square if no assets are available
+            warn!(
+                "No character assets available for '{}', spawning with colored square",
+                character_id
+            );
+            spawn_player_with_placeholder(
+                &mut commands,
+                player_size,
+                &settings,
+                animation_controller,
+                animation_state,
+            );
+        }
     } else {
         // Fallback to colored square if assets aren't loaded yet
         warn!("Character assets not loaded yet, spawning player with colored square");
-        let mut entity = commands.spawn(Transform::from_xyz(0.0, 100.0, 0.0));
-
-        entity.insert(Visibility::default());
-        entity.insert(Sprite {
-            color: Color::srgb(0.2, 0.7, 0.3), // Green placeholder
-            custom_size: Some(player_size),
-            ..default()
-        });
-        entity.insert(Name::new("Player"));
-
-        entity.insert(Player::default());
-        entity.insert(PlayerStats::from(settings.player.clone()));
-        entity.insert(GroundDetection::default());
-
-        entity.insert(Velocity::zero());
-        entity.insert(Gravity::default());
-        entity.insert(Collider::new(player_size));
-
-        entity.insert(animation_controller);
-        entity.insert(animation_state);
-
-        // Combat components
-        entity.insert(Health::new(100.0));
-        entity.insert(PlayerHealth);
-        entity.insert(Lives::new(3));
-        entity.insert(AttackCooldown::default());
-
-        info!("Player spawned at position (0, 100) with placeholder sprite");
+        spawn_player_with_placeholder(
+            &mut commands,
+            player_size,
+            &settings,
+            animation_controller,
+            animation_state,
+        );
     }
+}
+
+/// Spawn player with a colored placeholder square
+fn spawn_player_with_placeholder(
+    commands: &mut Commands,
+    player_size: Vec2,
+    settings: &crate::config::GameSettings,
+    animation_controller: AnimationController,
+    animation_state: AnimationState,
+) {
+    let mut entity = commands.spawn(Transform::from_xyz(0.0, 100.0, 0.0));
+
+    entity.insert(Visibility::default());
+    entity.insert(Sprite {
+        color: Color::srgb(0.2, 0.7, 0.3), // Green placeholder
+        custom_size: Some(player_size),
+        ..default()
+    });
+    entity.insert(Name::new("Player"));
+
+    entity.insert(Player::default());
+    entity.insert(PlayerStats::from(settings.player.clone()));
+    entity.insert(GroundDetection::default());
+
+    entity.insert(Velocity::zero());
+    entity.insert(Gravity::default());
+    entity.insert(Collider::new(player_size));
+
+    entity.insert(animation_controller);
+    entity.insert(animation_state);
+
+    // Combat components
+    entity.insert(Health::new(100.0));
+    entity.insert(PlayerHealth);
+    entity.insert(Lives::new(3));
+    entity.insert(AttackCooldown::default());
+
+    info!("Player spawned at position (0, 100) with placeholder sprite");
 }
 
 /// Spawn a ground platform for testing

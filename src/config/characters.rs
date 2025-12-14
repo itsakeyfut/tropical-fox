@@ -14,10 +14,12 @@ use thiserror::Error;
 pub enum CharacterType {
     /// Playable characters
     Player,
+    /// Boss characters
+    Boss,
     /// Enemy characters
     Enemy,
     /// NPC characters
-    NPC,
+    Npc,
 }
 
 /// Character definition with asset paths
@@ -37,10 +39,15 @@ pub struct CharacterDefinition {
 }
 
 /// Characters configuration file format
+///
+/// The structure is organized by category:
+/// - "players": playable characters
+/// - "bosses": boss characters
+/// - "enemies": enemy characters
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct CharactersConfig {
-    /// Map of character ID to character definition
-    pub characters: HashMap<String, CharacterDefinition>,
+    /// Nested map: category -> character_id -> character definition
+    pub characters: HashMap<String, HashMap<String, CharacterDefinition>>,
     /// Default player character ID
     pub default_player: String,
 }
@@ -56,14 +63,24 @@ pub enum CharacterConfigError {
 
     #[error("Character not found: {0}")]
     CharacterNotFound(String),
+
+    #[error("Duplicate character ID '{id}' found in categories: {categories}")]
+    DuplicateCharacterId { id: String, categories: String },
 }
 
 /// Load characters configuration from a RON file
+///
+/// This function validates that all character IDs are unique across all categories.
+/// If duplicate IDs are found, an error is returned.
 pub fn load_characters_config<P: AsRef<Path>>(
     path: P,
 ) -> Result<CharactersConfig, CharacterConfigError> {
     let content = fs::read_to_string(path)?;
     let config: CharactersConfig = ron::from_str(&content)?;
+
+    // Validate that all character IDs are unique across categories
+    config.validate_unique_ids()?;
+
     Ok(config)
 }
 
@@ -79,11 +96,43 @@ pub fn load_characters_config_optional<P: AsRef<Path>>(path: P) -> Option<Charac
 }
 
 impl CharactersConfig {
-    /// Get a character definition by ID
+    /// Validate that all character IDs are unique across all categories
+    ///
+    /// Returns an error if any character ID appears in multiple categories.
+    pub fn validate_unique_ids(&self) -> Result<(), CharacterConfigError> {
+        // Track which categories each ID appears in
+        let mut id_to_categories: HashMap<&str, Vec<&str>> = HashMap::new();
+
+        for (category, characters) in &self.characters {
+            for character_id in characters.keys() {
+                id_to_categories
+                    .entry(character_id.as_str())
+                    .or_default()
+                    .push(category.as_str());
+            }
+        }
+
+        // Check for duplicates
+        for (id, categories) in id_to_categories {
+            if categories.len() > 1 {
+                return Err(CharacterConfigError::DuplicateCharacterId {
+                    id: id.to_string(),
+                    categories: categories.join(", "),
+                });
+            }
+        }
+
+        Ok(())
+    }
+
+    /// Get a character definition by ID (searches all categories)
     pub fn get_character(&self, id: &str) -> Result<&CharacterDefinition, CharacterConfigError> {
-        self.characters
-            .get(id)
-            .ok_or_else(|| CharacterConfigError::CharacterNotFound(id.to_string()))
+        for category in self.characters.values() {
+            if let Some(character) = category.get(id) {
+                return Ok(character);
+            }
+        }
+        Err(CharacterConfigError::CharacterNotFound(id.to_string()))
     }
 
     /// Get the default player character
@@ -94,16 +143,32 @@ impl CharactersConfig {
     /// Get all playable characters
     pub fn get_playable_characters(&self) -> Vec<&CharacterDefinition> {
         self.characters
-            .values()
-            .filter(|c| c.character_type == CharacterType::Player)
-            .collect()
+            .get("players")
+            .map(|players| players.values().collect())
+            .unwrap_or_default()
+    }
+
+    /// Get all boss characters
+    pub fn get_boss_characters(&self) -> Vec<&CharacterDefinition> {
+        self.characters
+            .get("bosses")
+            .map(|bosses| bosses.values().collect())
+            .unwrap_or_default()
     }
 
     /// Get all enemy characters
     pub fn get_enemy_characters(&self) -> Vec<&CharacterDefinition> {
         self.characters
+            .get("enemies")
+            .map(|enemies| enemies.values().collect())
+            .unwrap_or_default()
+    }
+
+    /// Get all characters across all categories
+    pub fn get_all_characters(&self) -> Vec<&CharacterDefinition> {
+        self.characters
             .values()
-            .filter(|c| c.character_type == CharacterType::Enemy)
+            .flat_map(|category| category.values())
             .collect()
     }
 }
@@ -150,8 +215,9 @@ mod tests {
 
     #[test]
     fn test_characters_config() {
-        let mut characters = HashMap::new();
-        characters.insert(
+        // Create players category
+        let mut players = HashMap::new();
+        players.insert(
             "fox".to_string(),
             CharacterDefinition {
                 id: "fox".to_string(),
@@ -163,13 +229,92 @@ mod tests {
             },
         );
 
+        // Create bosses category
+        let mut bosses = HashMap::new();
+        bosses.insert(
+            "sunny_dragon".to_string(),
+            CharacterDefinition {
+                id: "sunny_dragon".to_string(),
+                name: "Sunny Dragon".to_string(),
+                character_type: CharacterType::Boss,
+                animation_config_path:
+                    "graphics/characters/bosses/sunny_dragon/sunny_dragon_animations.ron"
+                        .to_string(),
+                description: "A fearsome dragon".to_string(),
+            },
+        );
+
+        // Create nested structure
+        let mut characters = HashMap::new();
+        characters.insert("players".to_string(), players);
+        characters.insert("bosses".to_string(), bosses);
+
         let config = CharactersConfig {
             characters,
             default_player: "fox".to_string(),
         };
 
         assert!(config.get_character("fox").is_ok());
+        assert!(config.get_character("sunny_dragon").is_ok());
         assert!(config.get_default_player().is_ok());
         assert_eq!(config.get_playable_characters().len(), 1);
+        assert_eq!(config.get_boss_characters().len(), 1);
+        assert_eq!(config.get_all_characters().len(), 2);
+
+        // Validation should pass for unique IDs
+        assert!(config.validate_unique_ids().is_ok());
+    }
+
+    #[test]
+    fn test_duplicate_character_id_detection() {
+        // Create players category with "dragon"
+        let mut players = HashMap::new();
+        players.insert(
+            "dragon".to_string(),
+            CharacterDefinition {
+                id: "dragon".to_string(),
+                name: "Player Dragon".to_string(),
+                character_type: CharacterType::Player,
+                animation_config_path: "graphics/characters/players/dragon/dragon_animations.ron"
+                    .to_string(),
+                description: "A player dragon".to_string(),
+            },
+        );
+
+        // Create bosses category with same "dragon" ID
+        let mut bosses = HashMap::new();
+        bosses.insert(
+            "dragon".to_string(),
+            CharacterDefinition {
+                id: "dragon".to_string(),
+                name: "Boss Dragon".to_string(),
+                character_type: CharacterType::Boss,
+                animation_config_path: "graphics/characters/bosses/dragon/dragon_animations.ron"
+                    .to_string(),
+                description: "A boss dragon".to_string(),
+            },
+        );
+
+        // Create nested structure with duplicate ID
+        let mut characters = HashMap::new();
+        characters.insert("players".to_string(), players);
+        characters.insert("bosses".to_string(), bosses);
+
+        let config = CharactersConfig {
+            characters,
+            default_player: "dragon".to_string(),
+        };
+
+        // Validation should fail due to duplicate ID
+        let result = config.validate_unique_ids();
+        assert!(result.is_err());
+
+        if let Err(CharacterConfigError::DuplicateCharacterId { id, categories }) = result {
+            assert_eq!(id, "dragon");
+            assert!(categories.contains("players"));
+            assert!(categories.contains("bosses"));
+        } else {
+            panic!("Expected DuplicateCharacterId error");
+        }
     }
 }
