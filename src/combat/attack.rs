@@ -53,10 +53,12 @@ pub struct AttackCooldown {
 
 impl AttackCooldown {
     /// Create a new cooldown with specified duration
+    /// The timer starts in a finished state so the first attack is immediately available
     pub fn new(duration_secs: f32) -> Self {
-        Self {
-            timer: Timer::from_seconds(duration_secs, TimerMode::Once),
-        }
+        let mut timer = Timer::from_seconds(duration_secs, TimerMode::Once);
+        // Tick the timer to completion so the first attack is immediately available
+        timer.tick(std::time::Duration::from_secs_f32(duration_secs));
+        Self { timer }
     }
 
     /// Check if attack is ready (cooldown finished)
@@ -256,7 +258,7 @@ mod tests {
     #[test]
     fn test_attack_cooldown() {
         let cooldown = AttackCooldown::new(0.5);
-        assert!(!cooldown.can_attack()); // Timer starts at 0, needs to tick to finish
+        assert!(cooldown.can_attack()); // Should be ready for first attack
     }
 
     #[test]

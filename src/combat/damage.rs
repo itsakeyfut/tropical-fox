@@ -216,8 +216,9 @@ pub fn knockback_system(
             velocity.x = knockback.force.x;
             velocity.y = knockback.force.y;
 
-            // Decay knockback force over time
-            knockback.force *= 0.9;
+            // Decay knockback force over time (frame-rate independent)
+            let decay_rate = 5.0;
+            knockback.force *= (1.0 - decay_rate * time.delta_secs()).max(0.0);
         }
     }
 }

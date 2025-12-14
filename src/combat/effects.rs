@@ -4,7 +4,7 @@
 //! to provide satisfying combat feedback.
 
 use bevy::prelude::*;
-use bevy::time::Virtual;
+use bevy::time::{Real, Virtual};
 use rand::Rng;
 
 use super::{HitStopEvent, ScreenShakeEvent};
@@ -58,6 +58,7 @@ impl ScreenShake {
 
 /// Process hit stop events and pause game time
 pub fn hitstop_system(
+    real_time: Res<Time<Real>>,
     mut time: ResMut<Time<Virtual>>,
     mut hitstop: ResMut<HitStopTimer>,
     mut events: MessageReader<HitStopEvent>,
@@ -71,10 +72,8 @@ pub fn hitstop_system(
 
     // Update hit stop timer (using real time, not virtual)
     if hitstop.active {
-        // Manually tick using a fixed time step (approximately 60fps)
-        hitstop
-            .duration
-            .tick(std::time::Duration::from_secs_f32(1.0 / 60.0));
+        // Tick using real time delta (frame-rate independent)
+        hitstop.duration.tick(real_time.delta());
 
         if hitstop.duration.is_finished() {
             hitstop.active = false;
