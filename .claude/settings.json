@@ -1,19 +1,14 @@
 {
     "permissions": {
         "allow": [
-            // 基本的なファイル操作
             "Bash(mkdir:*)",
             "Bash(touch:*)",
             "Bash(ls:*)",
             "Bash(tree:*)",
             "Bash(mv:*)",
             "Bash(cp:*)",
-
-            // Git操作
             "Bash(git:*)",
             "Bash(gh:*)",
-
-            // Cargo基本コマンド
             "Bash(cargo build:*)",
             "Bash(cargo run:*)",
             "Bash(cargo test:*)",
@@ -24,35 +19,24 @@
             "Bash(cargo doc:*)",
             "Bash(cargo bench:*)",
             "Bash(cargo install:*)",
-
-            // プロジェクト固有
             "Bash(cargo x:*)",
-
-            // ユーティリティ
             "Bash(curl:*)",
             "Bash(pkill:*)",
             "Bash(true)"
         ],
         "deny": [
-            // セキュリティ
             "Bash(sudo:*)",
             "Bash(rm -rf /*)",
             "Bash(wget:*)",
-
-            // 破壊的なGit操作
             "Bash(git reset --hard:*)",
             "Bash(git push --force:*)",
             "Bash(git rebase:*)",
-
-            // 秘密情報
-            "Read(.env:*)",
             "Read(**/.env*)",
             "Read(id_rsa)",
             "Read(id_ed25519)",
             "Read(**/*token*)",
             "Read(**/*key*)",
             "Read(**/*secret*)",
-            "Write(.env:*)",
             "Write(**/secrets/**)",
             "Write(**/.env*)"
         ]
