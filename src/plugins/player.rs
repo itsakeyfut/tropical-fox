@@ -4,7 +4,7 @@
 
 use bevy::prelude::*;
 
-use crate::combat::{AttackCooldown, EnemyHealth, Health, Lives, PlayerHealth, PlayerSpawnPoint};
+use crate::combat::{AttackCooldown, Health, Lives, PlayerHealth, PlayerSpawnPoint};
 use crate::components::{
     AnimationClip, AnimationController, AnimationState, Collider, Gravity, GroundDetection, Player,
     PlayerStats, Velocity,
@@ -28,8 +28,8 @@ impl Plugin for PlayerPlugin {
         // Add spawn point resource
         app.insert_resource(PlayerSpawnPoint::default());
 
-        // Spawn player and test level when entering InGame state
-        app.add_systems(OnEnter(GameState::InGame), (spawn_player, spawn_test_walls));
+        // Spawn player when entering InGame state
+        app.add_systems(OnEnter(GameState::InGame), spawn_player);
 
         // Player input and movement systems (run in Update)
         app.add_systems(
@@ -93,8 +93,9 @@ fn spawn_player(
     character_assets: Option<Res<CharacterAssets>>,
     selected_character: Option<Res<SelectedCharacter>>,
 ) {
-    // Character display size (2x the sprite size for better visibility)
-    let player_size = Vec2::new(64.0, 64.0);
+    // Character display size from config
+    let sprite_size = settings.display.player_sprite_size;
+    let player_size = Vec2::new(sprite_size, sprite_size);
 
     // Determine which character to use
     let character_id = selected_character
@@ -154,7 +155,10 @@ fn spawn_player(
 
         if let Some(atlas) = character_atlas {
             // Spawn with texture atlas
-            let mut entity = commands.spawn(Transform::from_xyz(0.0, 100.0, 0.0));
+            // z=100.0 to render player in front of tilemap
+            let start_x = settings.stage.player_start_x;
+            let start_y = settings.stage.player_start_y;
+            let mut entity = commands.spawn(Transform::from_xyz(start_x, start_y, 100.0));
 
             entity.insert(Visibility::default());
             entity.insert(Sprite {
@@ -186,8 +190,8 @@ fn spawn_player(
             entity.insert(AttackCooldown::default());
 
             info!(
-                "Player spawned at position (0, 100) with character '{}' texture atlas",
-                character_id
+                "Player spawned at position ({}, {}) with character '{}' texture atlas",
+                start_x, start_y, character_id
             );
         } else {
             // Fallback to colored square if no assets are available
@@ -224,7 +228,11 @@ fn spawn_player_with_placeholder(
     animation_controller: AnimationController,
     animation_state: AnimationState,
 ) {
-    let mut entity = commands.spawn(Transform::from_xyz(0.0, 100.0, 0.0));
+    // Get player start position from config
+    let start_x = settings.stage.player_start_x;
+    let start_y = settings.stage.player_start_y;
+    // z=100.0 to render player in front of tilemap
+    let mut entity = commands.spawn(Transform::from_xyz(start_x, start_y, 100.0));
 
     entity.insert(Visibility::default());
     entity.insert(Sprite {
@@ -251,78 +259,8 @@ fn spawn_player_with_placeholder(
     entity.insert(Lives::new(3));
     entity.insert(AttackCooldown::default());
 
-    info!("Player spawned at position (0, 100) with placeholder sprite");
-}
-
-/// Spawn a ground platform for testing
-pub fn spawn_test_ground(mut commands: Commands) {
-    let ground_size = Vec2::new(800.0, 32.0);
-
-    commands.spawn((
-        // Transform and visibility
-        Transform::from_xyz(0.0, -200.0, 0.0),
-        Visibility::default(),
-        // Sprite rendering
-        Sprite {
-            color: Color::srgb(0.5, 0.3, 0.2), // Brown ground
-            custom_size: Some(ground_size),
-            ..default()
-        },
-        // Ground-specific components
-        crate::components::Ground,
-        Collider::new(ground_size),
-        // Name for debugging
-        Name::new("Ground Platform"),
-    ));
-
-    info!("Test ground platform spawned at position (0, -200)");
-}
-
-/// Spawn test walls for wall-jump practice
-pub fn spawn_test_walls(mut commands: Commands) {
-    // Left wall
-    let wall_size = Vec2::new(32.0, 500.0);
-    commands.spawn((
-        Transform::from_xyz(-350.0, 50.0, 0.0),
-        Visibility::default(),
-        Sprite {
-            color: Color::srgb(0.4, 0.4, 0.5), // Gray wall
-            custom_size: Some(wall_size),
-            ..default()
-        },
-        crate::components::Wall,
-        Collider::new(wall_size),
-        Name::new("Left Wall"),
-    ));
-
-    // Right wall
-    commands.spawn((
-        Transform::from_xyz(350.0, 50.0, 0.0),
-        Visibility::default(),
-        Sprite {
-            color: Color::srgb(0.4, 0.4, 0.5), // Gray wall
-            custom_size: Some(wall_size),
-            ..default()
-        },
-        crate::components::Wall,
-        Collider::new(wall_size),
-        Name::new("Right Wall"),
-    ));
-
-    // Platform in the middle (optional - for easier testing)
-    let platform_size = Vec2::new(150.0, 20.0);
-    commands.spawn((
-        Transform::from_xyz(0.0, -50.0, 0.0),
-        Visibility::default(),
-        Sprite {
-            color: Color::srgb(0.3, 0.5, 0.3), // Green platform
-            custom_size: Some(platform_size),
-            ..default()
-        },
-        crate::components::Ground,
-        Collider::new(platform_size),
-        Name::new("Middle Platform"),
-    ));
-
-    info!("Test walls spawned at positions (-350, 50) and (350, 50)");
+    info!(
+        "Player spawned at position ({}, {}) with placeholder sprite",
+        start_x, start_y
+    );
 }

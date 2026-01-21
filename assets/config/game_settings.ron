@@ -9,15 +9,31 @@
         title: "Tropical Fox",
         resizable: true,
     ),
+    display: (
+        // Camera zoom (smaller = more zoomed in)
+        camera_scale: 0.15,
+        // Player sprite display size in pixels
+        player_sprite_size: 12.0,
+    ),
+    stage: (
+        // Stage position offset
+        position_x: 0.0,
+        position_y: 0.0,
+        // Stage scale (1.0 = original LDtk size)
+        scale: 1.0,
+        // Player spawn position
+        player_start_x: 0.0,
+        player_start_y: 200.0,
+    ),
     player: (
         // Movement
-        move_speed: 200.0,
-        acceleration: 10.0,
-        deceleration: 15.0,
-        air_deceleration: 20.0,   // Air friction - stronger than ground for better landing precision
+        move_speed: 100.0,
+        acceleration: 5.0,
+        deceleration: 7.5,
+        air_deceleration: 10.0,   // Air friction - stronger than ground for better landing precision
 
         // Jump
-        jump_force: 400.0,
+        jump_force: 200.0,
         jump_cut_multiplier: 0.4,
 
         // Advanced jump mechanics (Celeste-inspired)

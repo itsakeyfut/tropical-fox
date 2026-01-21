@@ -121,6 +121,51 @@ impl Default for WindowSettings {
     }
 }
 
+/// Display settings for rendering
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct DisplaySettings {
+    /// Camera zoom scale (smaller = more zoomed in)
+    pub camera_scale: f32,
+    /// Player sprite display size in pixels
+    pub player_sprite_size: f32,
+}
+
+impl Default for DisplaySettings {
+    fn default() -> Self {
+        Self {
+            camera_scale: 0.25,
+            player_sprite_size: 32.0,
+        }
+    }
+}
+
+/// Stage settings for level layout
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct StageSettings {
+    /// Stage X position offset
+    pub position_x: f32,
+    /// Stage Y position offset
+    pub position_y: f32,
+    /// Stage scale multiplier (1.0 = original size)
+    pub scale: f32,
+    /// Player spawn X position
+    pub player_start_x: f32,
+    /// Player spawn Y position
+    pub player_start_y: f32,
+}
+
+impl Default for StageSettings {
+    fn default() -> Self {
+        Self {
+            position_x: 0.0,
+            position_y: 0.0,
+            scale: 1.0,
+            player_start_x: 0.0,
+            player_start_y: 100.0,
+        }
+    }
+}
+
 /// Main game settings structure
 #[derive(Debug, Clone, Serialize, Deserialize, Default, Resource)]
 pub struct GameSettings {
@@ -128,6 +173,10 @@ pub struct GameSettings {
     pub physics: PhysicsSettings,
     /// Window configuration
     pub window: WindowSettings,
+    /// Display configuration (camera, sprite sizes)
+    pub display: DisplaySettings,
+    /// Stage configuration (position, scale, player start)
+    pub stage: StageSettings,
     /// Player configuration
     pub player: PlayerSettings,
 }

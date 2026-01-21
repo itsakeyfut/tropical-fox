@@ -6,7 +6,6 @@ use bevy::prelude::*;
 
 use crate::config;
 use crate::game_state::{GameState, InGameState};
-use crate::plugins::player::spawn_test_ground;
 use crate::resources::PhysicsConfig;
 use crate::systems::{apply_gravity, update_position};
 
@@ -28,21 +27,28 @@ impl Plugin for CorePlugin {
         };
 
         app.insert_resource(physics_config);
+        app.insert_resource(settings);
 
         // Register startup systems
         app.add_systems(Startup, (setup_camera, setup_initial_state));
-
-        // Spawn test ground when entering InGame state
-        app.add_systems(OnEnter(GameState::InGame), spawn_test_ground);
 
         // Register physics systems (run in FixedUpdate for consistent physics)
         app.add_systems(FixedUpdate, (apply_gravity, update_position).chain());
     }
 }
 
-/// Set up the main 2D camera
-fn setup_camera(mut commands: Commands) {
-    commands.spawn((Camera2d, Name::new("Main Camera")));
+/// Set up the main 2D camera with zoom for pixel art
+fn setup_camera(mut commands: Commands, settings: Res<config::GameSettings>) {
+    commands.spawn((
+        Camera2d,
+        Projection::Orthographic(OrthographicProjection {
+            // Zoom in to make tiles more visible (smaller scale = more zoom)
+            // Configured via assets/config/game_settings.ron
+            scale: settings.display.camera_scale,
+            ..OrthographicProjection::default_2d()
+        }),
+        Name::new("Main Camera"),
+    ));
 }
 
 /// Set initial game state to InGame for development

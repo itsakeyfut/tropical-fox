@@ -4,6 +4,7 @@
 
 pub mod animation;
 pub mod enemy;
+pub mod level;
 
 use bevy::prelude::*;
 
@@ -218,9 +219,9 @@ impl Collider {
 }
 
 /// Ground marker component for platforms and surfaces
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Default)]
 pub struct Ground;
 
 /// Wall marker component for vertical surfaces that can be wall-jumped
-#[derive(Component, Debug)]
+#[derive(Component, Debug, Default)]
 pub struct Wall;
