@@ -24,7 +24,7 @@ pub struct BossTypeConfig {
 }
 
 /// Bosses configuration file format
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, Asset, TypePath)]
 pub struct BossesConfig {
     /// Map of boss_id -> boss definition
     pub bosses: HashMap<String, BossTypeConfig>,
