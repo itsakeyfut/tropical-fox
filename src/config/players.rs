@@ -24,7 +24,7 @@ pub struct PlayerTypeConfig {
 }
 
 /// Players configuration file format
-#[derive(Debug, Clone, Serialize, Deserialize)]
+#[derive(Debug, Clone, Serialize, Deserialize, Asset, TypePath)]
 pub struct PlayersConfig {
     /// Map of player_id -> player definition
     pub players: HashMap<String, PlayerTypeConfig>,

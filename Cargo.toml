@@ -5,8 +5,8 @@ edition = "2024"
 
 [features]
 default = []
-# Development feature: enables dynamic linking for faster iteration
-bevy-dev = ["bevy/dynamic_linking"]
+# Development feature: enables dynamic linking and file watcher for hot-reload
+bevy-dev = ["bevy/dynamic_linking", "bevy/file_watcher"]
 
 [dependencies]
 # Core Bevy engine
@@ -35,6 +35,10 @@ ron = "0.12.0"
 # Misc
 rand = "0.9.2"
 thiserror = "2.0.17"
+
+# File watching for config hot-reload (only used in debug builds via cfg gates)
+notify = "8.2.0"
+crossbeam-channel = "0.5.15"
 
 [profile.dev]
 opt-level = 1

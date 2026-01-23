@@ -122,7 +122,7 @@ impl Default for WindowSettings {
 }
 
 /// Main game settings structure
-#[derive(Debug, Clone, Serialize, Deserialize, Default, Resource)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, Resource, Asset, TypePath)]
 pub struct GameSettings {
     /// Physics configuration
     pub physics: PhysicsSettings,

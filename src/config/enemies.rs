@@ -292,7 +292,7 @@ impl Default for EnemyTypeConfig {
 }
 
 /// Enemy configuration file format
-#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+#[derive(Debug, Clone, Serialize, Deserialize, Default, Asset, TypePath)]
 pub struct EnemiesConfig {
     /// Map of enemy type ID to configuration
     pub enemies: HashMap<String, EnemyTypeConfig>,
