@@ -1,0 +1,27 @@
+[package]
+name = "tropical-fox-enemy"
+version.workspace = true
+edition.workspace = true
+description = "Enemy and boss system for Tropical Fox game"
+
+[dependencies]
+# Workspace crates
+tropical-fox-common = { path = "../common" }
+tropical-fox-combat = { path = "../combat" }
+tropical-fox-animation = { path = "../animation" }
+
+# Core Bevy
+bevy.workspace = true
+
+# Physics
+bevy_rapier2d.workspace = true
+
+# Serialization
+serde.workspace = true
+ron.workspace = true
+
+# Error handling
+thiserror.workspace = true
+
+# Misc
+rand.workspace = true

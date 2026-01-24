@@ -1,0 +1,21 @@
+[package]
+name = "tropical-fox-hot-asset"
+version.workspace = true
+edition.workspace = true
+description = "Hot-reload system for RON configuration files with Bevy integration"
+license = "MIT OR Apache-2.0"
+
+[dependencies]
+# Core Bevy (minimal features for asset loading)
+bevy.workspace = true
+
+# Serialization
+serde.workspace = true
+ron.workspace = true
+
+# File watching
+notify.workspace = true
+crossbeam-channel.workspace = true
+
+# Error handling
+thiserror.workspace = true

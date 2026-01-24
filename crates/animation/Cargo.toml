@@ -1,0 +1,22 @@
+[package]
+name = "tropical-fox-animation"
+version.workspace = true
+edition.workspace = true
+description = "Animation system for Tropical Fox game"
+
+[dependencies]
+# Workspace crates
+tropical-fox-common = { path = "../common" }
+
+# Core Bevy
+bevy.workspace = true
+
+# Animation
+benimator.workspace = true
+
+# Serialization
+serde.workspace = true
+ron.workspace = true
+
+# Error handling
+thiserror.workspace = true

@@ -1,0 +1,18 @@
+[package]
+name = "tropical-fox-combat"
+version.workspace = true
+edition.workspace = true
+description = "Combat system for Tropical Fox game"
+
+[dependencies]
+# Workspace crates
+tropical-fox-common = { path = "../common" }
+
+# Core Bevy
+bevy.workspace = true
+
+# Physics (for collision detection)
+bevy_rapier2d.workspace = true
+
+# Misc
+rand.workspace = true

@@ -1,0 +1,33 @@
+[package]
+name = "tropical-fox"
+version.workspace = true
+edition.workspace = true
+
+[features]
+default = []
+# Development feature: enables dynamic linking and file watcher for hot-reload
+bevy-dev = ["bevy/dynamic_linking", "bevy/file_watcher"]
+
+[dependencies]
+# Workspace crates
+tropical-fox-common = { path = "../common" }
+tropical-fox-hot-asset = { path = "../hot-asset" }
+tropical-fox-animation = { path = "../animation" }
+tropical-fox-combat = { path = "../combat" }
+tropical-fox-player = { path = "../player" }
+tropical-fox-enemy = { path = "../enemy" }
+
+# Core dependencies
+bevy.workspace = true
+bevy_rapier2d.workspace = true
+bevy_ecs_tilemap.workspace = true
+bevy_kira_audio.workspace = true
+benimator.workspace = true
+bevy_egui.workspace = true
+bevy-inspector-egui.workspace = true
+serde.workspace = true
+ron.workspace = true
+rand.workspace = true
+thiserror.workspace = true
+notify.workspace = true
+crossbeam-channel.workspace = true

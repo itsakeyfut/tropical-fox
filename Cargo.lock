@@ -5549,6 +5549,84 @@ dependencies = [
  "ron 0.12.0",
  "serde",
  "thiserror 2.0.17",
+ "tropical-fox-animation",
+ "tropical-fox-combat",
+ "tropical-fox-common",
+ "tropical-fox-enemy",
+ "tropical-fox-hot-asset",
+ "tropical-fox-player",
+]
+
+[[package]]
+name = "tropical-fox-animation"
+version = "0.1.0"
+dependencies = [
+ "benimator",
+ "bevy",
+ "ron 0.12.0",
+ "serde",
+ "thiserror 2.0.17",
+ "tropical-fox-common",
+]
+
+[[package]]
+name = "tropical-fox-combat"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "bevy_rapier2d",
+ "rand",
+ "tropical-fox-common",
+]
+
+[[package]]
+name = "tropical-fox-common"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "serde",
+ "thiserror 2.0.17",
+]
+
+[[package]]
+name = "tropical-fox-enemy"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "bevy_rapier2d",
+ "rand",
+ "ron 0.12.0",
+ "serde",
+ "thiserror 2.0.17",
+ "tropical-fox-animation",
+ "tropical-fox-combat",
+ "tropical-fox-common",
+]
+
+[[package]]
+name = "tropical-fox-hot-asset"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "crossbeam-channel",
+ "notify",
+ "ron 0.12.0",
+ "serde",
+ "thiserror 2.0.17",
+]
+
+[[package]]
+name = "tropical-fox-player"
+version = "0.1.0"
+dependencies = [
+ "bevy",
+ "bevy_rapier2d",
+ "ron 0.12.0",
+ "serde",
+ "thiserror 2.0.17",
+ "tropical-fox-animation",
+ "tropical-fox-combat",
+ "tropical-fox-common",
 ]
 
 [[package]]
