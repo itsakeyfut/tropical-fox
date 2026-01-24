@@ -8,6 +8,7 @@ use tropical_fox_enemy::{
     BossesConfig, EnemiesConfig, Enemy, EnemyAI, EnemyStats, ProjectileShooter,
 };
 use tropical_fox_hot_asset::{AssetReloaded, HotAssetHandle};
+use tropical_fox_level::LevelsConfig;
 use tropical_fox_player::PlayersConfig;
 
 use crate::config::GameSettings;
@@ -215,6 +216,32 @@ pub fn apply_bosses_config_reload(
             info!("  Total boss types: {}", new_config.bosses.len());
 
             info!("✅ Successfully applied reloaded bosses config");
+        }
+    }
+}
+
+/// System that applies reloaded levels configuration to the game state
+pub fn apply_levels_config_reload(
+    mut events: MessageReader<AssetReloaded<LevelsConfig>>,
+    handle: Res<HotAssetHandle<LevelsConfig>>,
+    assets: Res<Assets<LevelsConfig>>,
+) {
+    for event in events.read() {
+        if !event.success {
+            continue;
+        }
+
+        if let Some(new_config) = assets.get(&handle.0) {
+            info!("🗺️ Applying reloaded levels.ron...");
+            info!("  Total levels: {}", new_config.levels.len());
+            info!("  Default level: {}", new_config.default_level);
+
+            // Log each level's basic info
+            for (level_id, level) in &new_config.levels {
+                info!("  - {}: {} ({})", level_id, level.name, level.ldtk_path);
+            }
+
+            info!("✅ Successfully applied reloaded levels config");
         }
     }
 }

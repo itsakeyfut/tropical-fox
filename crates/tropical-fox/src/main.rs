@@ -13,6 +13,7 @@ mod physics_systems;
 use tropical_fox_animation::AnimationPlugin;
 use tropical_fox_combat::CombatPlugin;
 use tropical_fox_enemy::EnemyPlugin;
+use tropical_fox_level::LevelPlugin;
 use tropical_fox_player::{PlayerPlugin, SelectedCharacter};
 
 use config::load_settings_or_default;
@@ -28,10 +29,12 @@ use config::GameSettings;
 #[cfg(debug_assertions)]
 use hot_reload_systems::{
     apply_bosses_config_reload, apply_enemies_config_reload, apply_game_settings_reload,
-    apply_players_config_reload,
+    apply_levels_config_reload, apply_players_config_reload,
 };
 #[cfg(debug_assertions)]
 use tropical_fox_enemy::{BossesConfig, EnemiesConfig};
+#[cfg(debug_assertions)]
+use tropical_fox_level::LevelsConfig;
 #[cfg(debug_assertions)]
 use tropical_fox_player::PlayersConfig;
 
@@ -112,6 +115,7 @@ fn main() {
     .add_plugins((
         CorePlugin,
         AnimationPlugin,
+        LevelPlugin,
         PlayerPlugin,
         CombatPlugin,
         EnemyPlugin,
@@ -137,6 +141,10 @@ fn main() {
             HotReloadPlugin::<BossesConfig>::new("config/bosses.ron").with_verbose(true),
         );
 
+        app.add_plugins(
+            HotReloadPlugin::<LevelsConfig>::new("config/levels.ron").with_verbose(true),
+        );
+
         app.add_systems(
             Update,
             (
@@ -144,6 +152,7 @@ fn main() {
                 apply_enemies_config_reload,
                 apply_players_config_reload,
                 apply_bosses_config_reload,
+                apply_levels_config_reload,
             ),
         );
     }

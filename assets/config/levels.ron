@@ -1,0 +1,30 @@
+(
+    // Map of level_id -> level definition
+    levels: {
+        "test_level": (
+            id: "test_level",
+            name: "Test Level",
+            ldtk_path: "levels/test.ldtk",
+            music_path: None,
+            background_layers: [
+                // Example background layer (commented out until assets are available)
+                // (
+                //     sprite_path: "graphics/backgrounds/sky.png",
+                //     parallax_factor: 0.2,
+                //     z_order: -100.0,
+                //     scroll_speed: (x: 0.0, y: 0.0),
+                // ),
+                // (
+                //     sprite_path: "graphics/backgrounds/mountains.png",
+                //     parallax_factor: 0.5,
+                //     z_order: -50.0,
+                //     scroll_speed: (x: 0.0, y: 0.0),
+                // ),
+            ],
+            description: "Basic test level for development",
+        ),
+    },
+
+    // Default/starting level ID
+    default_level: "test_level",
+)

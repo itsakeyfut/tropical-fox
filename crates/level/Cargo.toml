@@ -1,0 +1,12 @@
+[package]
+name = "tropical-fox-level"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+tropical-fox-common = { path = "../common" }
+bevy.workspace = true
+bevy_ecs_ldtk.workspace = true
+serde.workspace = true
+ron.workspace = true
+thiserror.workspace = true
