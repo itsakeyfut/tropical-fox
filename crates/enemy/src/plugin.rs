@@ -841,6 +841,7 @@ fn enemy_death_system(
 }
 
 /// Ground collision system for enemies with gravity
+#[allow(clippy::type_complexity)]
 fn enemy_ground_collision(
     mut enemy_query: Query<
         (&mut Transform, &mut Velocity, &Collider),

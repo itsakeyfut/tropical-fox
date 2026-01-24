@@ -30,32 +30,38 @@ cargo build --release
 
 ## Architecture
 
-### Plugin Structure
-The game uses Bevy's plugin system for modularity. Plugins are organized in `src/plugins/`:
+### Workspace Structure
+The project uses a Cargo workspace with modular crates:
 
-- **CorePlugin** - Camera setup, window configuration, global resources
-- **AnimationPlugin** - Sprite animation using benimator
-- **PlayerPlugin** - Player input, movement, physics
+```
+crates/
+├── tropical-fox/     # Main binary crate (entry point, core setup)
+├── common/           # Shared types (game states, components, events, resources)
+├── animation/        # Animation system plugin (benimator integration)
+├── player/           # Player input, movement, physics plugin
+├── combat/           # Combat system plugin
+├── enemy/            # Enemy AI and behavior plugin
+└── hot-asset/        # Hot-reload infrastructure for RON configs
+```
+
+**Dependency flow**: `tropical-fox` → domain crates (player, enemy, combat, animation) → `common`
+
+### Plugin Architecture
+Each domain crate exports a Bevy plugin registered in `crates/tropical-fox/src/main.rs`:
+
+- **CorePlugin** (`tropical-fox`) - Camera, window, global physics setup
+- **AnimationPlugin** (`animation`) - Sprite animation via benimator
+- **PlayerPlugin** (`player`) - Character control, physics, animation state
+- **CombatPlugin** (`combat`) - Hitboxes, damage, health systems
+- **EnemyPlugin** (`enemy`) - Enemy spawning, AI, boss mechanics
+- **HotReloadPlugin** (`hot-asset`, debug only) - RON config file watching
 
 ### Game State Machine
-Defined in `src/game_state.rs`:
-- `GameState`: Loading -> Title -> WorldMap -> InGame -> Paused/GameOver
+Defined in `crates/common/src/game_state.rs`:
+- `GameState`: Loading → Title → WorldMap → InGame → Paused/GameOver
 - `InGameState` (SubState of InGame): StagePlay, BossRoom, StageTransition
 
-### Module Structure
-```
-src/
-├── main.rs           # Entry point, plugin registration
-├── game_state.rs     # State machine definitions
-├── error.rs          # thiserror-based error types
-├── config/           # RON configuration loading
-├── components/       # ECS components (animation, etc.)
-├── systems/          # Bevy systems (physics, player, animation)
-├── plugins/          # Bevy plugins
-├── resources/        # Global game resources
-├── events/           # Custom Bevy events
-└── debug/            # Debug mode features
-```
+State transitions drive system scheduling and plugin activation.
 
 ### Configuration System
 Game data is defined in RON files under `assets/config/`:
@@ -63,12 +69,10 @@ Game data is defined in RON files under `assets/config/`:
 - `players.ron` - Player character definitions and animation paths
 - `bosses.ron` - Boss character definitions and animation paths
 - `enemies.ron` - Enemy type definitions with stats, AI, and behaviors
-- `animation/*.ron` - Animation clip definitions
+
+**Hot-reload**: In debug builds, RON config changes are detected via `notify` crate and automatically reloaded. Hot-reload handlers are in `crates/tropical-fox/src/hot_reload_systems.rs`.
 
 RON reference guide: `memo/ron_format_guide.md`
-
-### Error Handling Philosophy
-The game uses graceful degradation - errors are logged but fallback values are preferred over crashes. See `src/error.rs` for the error type hierarchy.
 
 ## Key Dependencies
 
@@ -93,3 +97,15 @@ Custom slash commands are available:
 - Never commit directly to `main` - use feature branches (`feat/`, `fix/`, `refactor/`, `docs/`)
 - Keep PRs under 100 lines of diff when possible
 - Run `cargo fmt`, `cargo clippy`, `cargo test`, and `cargo build --release` before committing
+
+### Working with the Workspace
+
+When adding new features, determine which crate should own the functionality:
+- Shared types/states → `common`
+- Character control → `player`
+- Enemy behavior → `enemy`
+- Visual effects/animation → `animation`
+- Damage/health systems → `combat`
+- Infrastructure/debugging → `hot-asset` or `tropical-fox`
+
+Add cross-crate dependencies in the relevant `Cargo.toml` and import via `use tropical_fox_<crate>::...`
