@@ -1,0 +1,36 @@
+# Cargo configuration for Tropical Fox
+# Optimizes build times and binary size for Bevy game development
+
+# Fast compilation for development builds using LLD linker
+# Note: These settings are optional and can be removed if they cause issues
+
+# Windows: Use LLD for faster linking
+[target.x86_64-pc-windows-msvc]
+linker = "rust-lld.exe"
+
+# Linux: Use LLD if available
+[target.x86_64-unknown-linux-gnu]
+linker = "clang"
+rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+# macOS: Use default linker (ld64) - LLD not fully supported
+# Uncomment below to enable LLD on macOS if using newer Rust versions with LLD support
+# [target.x86_64-apple-darwin]
+# rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+#
+# [target.aarch64-apple-darwin]
+# rustflags = ["-C", "link-arg=-fuse-ld=lld"]
+
+# Build aliases for common tasks
+[alias]
+# Run with dynamic linking for faster iteration (requires nightly features)
+dev = "run --features bevy-dev"
+
+# Build optimized release binary
+release = "build --release"
+
+# Run all pre-commit checks
+check-all = "run --quiet --bin=check-all"
+
+# Quick check without running the game
+quick = "check --all-features"

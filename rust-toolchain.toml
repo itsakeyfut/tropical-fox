@@ -1,4 +1,15 @@
 [toolchain]
-channel = "1.91.0"
+channel = "1.92.0"
+profile = "minimal"
 components = ["rustfmt", "clippy"]
-targets = ["x86_64-unknown-linux-gnu"]
+targets = [
+    # Windows (64-bit) - primary development target
+    "x86_64-pc-windows-msvc",
+
+    # Linux (64-bit) - for testing cross-platform compatibility
+    "x86_64-unknown-linux-gnu",
+
+    # Note: macOS targets should be built on macOS machines or CI/CD
+    # "x86_64-apple-darwin",      # macOS Intel
+    # "aarch64-apple-darwin",     # macOS Apple Silicon
+]
