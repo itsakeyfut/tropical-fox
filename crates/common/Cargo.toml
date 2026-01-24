@@ -1,0 +1,15 @@
+[package]
+name = "tropical-fox-common"
+version.workspace = true
+edition.workspace = true
+description = "Common types and utilities for Tropical Fox game"
+
+[dependencies]
+# Core Bevy
+bevy.workspace = true
+
+# Serialization (for component derives)
+serde.workspace = true
+
+# Error handling
+thiserror.workspace = true

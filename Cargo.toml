@@ -1,14 +1,20 @@
-[package]
-name = "tropical-fox"
+[workspace]
+members = [
+    "crates/tropical-fox",
+    "crates/common",
+    "crates/hot-asset",
+    "crates/animation",
+    "crates/combat",
+    "crates/player",
+    "crates/enemy",
+]
+resolver = "2"
+
+[workspace.package]
 version = "0.1.0"
 edition = "2024"
 
-[features]
-default = []
-# Development feature: enables dynamic linking and file watcher for hot-reload
-bevy-dev = ["bevy/dynamic_linking", "bevy/file_watcher"]
-
-[dependencies]
+[workspace.dependencies]
 # Core Bevy engine
 bevy = { version = "0.17.3" }
 
@@ -36,7 +42,7 @@ ron = "0.12.0"
 rand = "0.9.2"
 thiserror = "2.0.17"
 
-# File watching for config hot-reload (only used in debug builds via cfg gates)
+# File watching for config hot-reload
 notify = "8.2.0"
 crossbeam-channel = "0.5.15"
 
