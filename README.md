@@ -1,10 +1,15 @@
 # Tropical Fox
 
+## Progress
+
+![Basic Level](./screenshots/basic-level.png)
+
 ## Credits and Licenses
 
 This project uses the following free assets:
 
 ### Graphics: Sunny Land Collection
+
 - **Author**: Luis Zuno (Ansimuz)
 - **License**: Creative Commons Zero (CC0)
 - **Source**: [ansimuz.itch.io](https://ansimuz.itch.io/)
@@ -14,11 +19,13 @@ This project uses the following free assets:
   - Website: [ansimuz.com](http://www.ansimuz.com)
 
 ### Music: SunnyLand Music Pack
+
 - **Author**: Luis Zuno (Ansimuz)
 - **License**: Free to use in personal and commercial projects (credit not required but appreciated)
 - **Source**: [ansimuz.itch.io](https://ansimuz.itch.io/)
 
 ### Music: Platformer Background Music
+
 - **Author**: Pascal Belisle
 - **License**: Free to use with appropriate credit
 - **Links**:
