@@ -34,7 +34,7 @@ cargo build --release
 The project uses a Cargo workspace with modular crates:
 
 ```
-crates/
+app/
 ├── tropical-fox/     # Main binary crate (entry point, core setup)
 ├── common/           # Shared types (game states, components, events, resources)
 ├── animation/        # Animation system plugin (benimator integration)
@@ -47,7 +47,7 @@ crates/
 **Dependency flow**: `tropical-fox` → domain crates (player, enemy, combat, animation) → `common`
 
 ### Plugin Architecture
-Each domain crate exports a Bevy plugin registered in `crates/tropical-fox/src/main.rs`:
+Each domain crate exports a Bevy plugin registered in `app/tropical-fox/src/main.rs`:
 
 - **CorePlugin** (`tropical-fox`) - Camera, window, global physics setup
 - **AnimationPlugin** (`animation`) - Sprite animation via benimator
@@ -57,7 +57,7 @@ Each domain crate exports a Bevy plugin registered in `crates/tropical-fox/src/m
 - **HotReloadPlugin** (`hot-asset`, debug only) - RON config file watching
 
 ### Game State Machine
-Defined in `crates/common/src/game_state.rs`:
+Defined in `app/common/src/game_state.rs`:
 - `GameState`: Loading → Title → WorldMap → InGame → Paused/GameOver
 - `InGameState` (SubState of InGame): StagePlay, BossRoom, StageTransition
 
@@ -70,7 +70,7 @@ Game data is defined in RON files under `assets/config/`:
 - `bosses.ron` - Boss character definitions and animation paths
 - `enemies.ron` - Enemy type definitions with stats, AI, and behaviors
 
-**Hot-reload**: In debug builds, RON config changes are detected via `notify` crate and automatically reloaded. Hot-reload handlers are in `crates/tropical-fox/src/hot_reload_systems.rs`.
+**Hot-reload**: In debug builds, RON config changes are detected via `notify` crate and automatically reloaded. Hot-reload handlers are in `app/tropical-fox/src/hot_reload_systems.rs`.
 
 RON reference guide: `memo/ron_format_guide.md`
 

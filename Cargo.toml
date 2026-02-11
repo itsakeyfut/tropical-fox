@@ -1,12 +1,12 @@
 [workspace]
 members = [
-    "crates/tropical-fox",
-    "crates/common",
-    "crates/hot-asset",
-    "crates/animation",
-    "crates/combat",
-    "crates/player",
-    "crates/enemy",
+    "app/tropical-fox",
+    "app/common",
+    "app/hot-asset",
+    "app/animation",
+    "app/combat",
+    "app/player",
+    "app/enemy",
 ]
 resolver = "2"
 
