@@ -135,8 +135,9 @@ fn main() {
 ## アセットパス解決
 
 バイナリクレートは以下をサポートするアセットパス解決を処理：
+
 - ワークスペースルートからの実行: `cargo run`
-- クレートディレクトリからの実行: `cd crates/tropical-fox && cargo run`
+- クレートディレクトリからの実行: `cd app/tropical-fox && cargo run`
 - どこからでもコンパイル済みバイナリの実行
 
 パスを順番に試行: `assets`、`../../assets`、`../assets`
@@ -180,6 +181,7 @@ cargo build --release
 ## デバッグ機能
 
 `#[cfg(debug_assertions)]`でのみ有効：
+
 - 設定ホットリロード
 - 詳細リロードログ
 - リロードメトリクス追跡
@@ -188,6 +190,7 @@ cargo build --release
 ## 依存関係
 
 ### 内部クレート
+
 - `tropical-fox-animation`
 - `tropical-fox-combat`
 - `tropical-fox-common`
@@ -196,6 +199,7 @@ cargo build --release
 - `tropical-fox-player`
 
 ### 外部クレート
+
 - `bevy`: ゲームエンジン
 - ルート`Cargo.toml`で定義された全ワークスペース依存関係
 
