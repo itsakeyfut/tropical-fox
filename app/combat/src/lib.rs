@@ -19,7 +19,7 @@ pub use damage::*;
 pub use effects::*;
 pub use health::*;
 
-use tropical_fox_common::GameState;
+use tropical_fox_common::{GameState, PlayerDeathEvent};
 
 /// Event fired when an entity takes damage
 #[derive(bevy::ecs::prelude::Message)]
@@ -71,6 +71,7 @@ impl Plugin for CombatPlugin {
         app.add_message::<DeathEvent>();
         app.add_message::<HitStopEvent>();
         app.add_message::<ScreenShakeEvent>();
+        app.add_message::<PlayerDeathEvent>();
 
         // Combat systems (execution order is important)
         app.add_systems(

@@ -4,7 +4,6 @@
 
 use bevy::prelude::*;
 use tropical_fox_common::{GameState, InGameState, PhysicsConfig};
-use tropical_fox_player::spawn_test_ground;
 
 use crate::config;
 use crate::physics_systems::{apply_gravity, update_position};
@@ -32,7 +31,8 @@ impl Plugin for CorePlugin {
         app.add_systems(Startup, (setup_camera, setup_initial_state));
 
         // Spawn test ground when entering InGame state
-        app.add_systems(OnEnter(GameState::InGame), spawn_test_ground);
+        // COMMENTED OUT: Using LDtk level system instead
+        // app.add_systems(OnEnter(GameState::InGame), spawn_test_ground);
 
         // Register physics systems (run in FixedUpdate for consistent physics)
         app.add_systems(FixedUpdate, (apply_gravity, update_position).chain());

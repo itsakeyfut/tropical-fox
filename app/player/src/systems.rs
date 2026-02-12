@@ -3,7 +3,9 @@
 //! Handles player input, movement, jumping, and sprite updates.
 
 use bevy::prelude::*;
-use tropical_fox_common::{Collider, Ground, GroundDetection, Player, PlayerStats, Velocity, Wall};
+use tropical_fox_common::{
+    Collider, Ground, GroundDetection, Platform, Player, PlayerStats, Velocity, Wall,
+};
 
 /// Handle horizontal player movement based on keyboard input
 pub fn player_horizontal_movement(
@@ -103,6 +105,7 @@ pub fn ground_collision(
         With<Player>,
     >,
     ground_query: Query<(&Transform, &Collider), (With<Ground>, Without<Player>)>,
+    platform_query: Query<(&Transform, &Collider), (With<Platform>, Without<Player>)>,
     time: Res<Time>,
 ) {
     for (
@@ -142,6 +145,44 @@ pub fn ground_collision(
                     }
 
                     ground_detection.is_grounded = true;
+                }
+            }
+        }
+
+        // Check platform collision (one-way platforms)
+        for (platform_transform, platform_collider) in &platform_query {
+            let player_pos = player_transform.translation.truncate();
+            let platform_pos = platform_transform.translation.truncate();
+
+            // Only collide if player is falling (velocity.y <= 0) and approaching from above
+            if velocity.y <= 0.0 {
+                // Check AABB collision
+                if check_aabb_collision(
+                    player_pos,
+                    player_collider,
+                    platform_pos,
+                    platform_collider,
+                ) {
+                    let player_bottom =
+                        player_pos.y + player_collider.offset.y - player_collider.size.y / 2.0;
+                    let platform_top = platform_pos.y
+                        + platform_collider.offset.y
+                        + platform_collider.size.y / 2.0;
+
+                    // Player is on platform if they're above or slightly overlapping with platform top
+                    if player_bottom <= platform_top + 5.0 && player_bottom >= platform_top - 2.0 {
+                        // Position player on top of the platform
+                        player_transform.translation.y = platform_transform.translation.y
+                            + platform_collider.size.y / 2.0
+                            + player_collider.size.y / 2.0;
+
+                        // Stop downward velocity
+                        if velocity.y < 0.0 {
+                            velocity.y = 0.0;
+                        }
+
+                        ground_detection.is_grounded = true;
+                    }
                 }
             }
         }
