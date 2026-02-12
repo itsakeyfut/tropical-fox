@@ -203,3 +203,7 @@ pub struct Ground;
 /// Wall marker component for vertical surfaces that can be wall-jumped
 #[derive(Component, Debug)]
 pub struct Wall;
+
+/// Platform marker component for one-way platforms (can jump through from below)
+#[derive(Component, Debug)]
+pub struct Platform;

@@ -1,0 +1,13 @@
+[package]
+name = "tropical-fox-level"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+bevy.workspace = true
+bevy_ecs_ldtk.workspace = true
+serde.workspace = true
+ron.workspace = true
+
+tropical-fox-common = { path = "../common" }
+tropical-fox-hot-asset = { path = "../hot-asset" }

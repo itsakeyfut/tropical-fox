@@ -1,0 +1,18 @@
+(
+    levels: {
+        "stage_1": (
+            ldtk_path: "graphics/environments/test_stage/levels/test.ldtk",
+            camera_scale: 2.0,
+            level_offset: (0.0, 0.0),
+            backgrounds: [
+                // Example background layer (will use placeholder if texture doesn't exist)
+                // (
+                //     texture_path: "graphics/environments/test_stage/backgrounds/sky.png",
+                //     parallax_speed: 0.1,
+                //     z_index: -100.0,
+                //     scroll_axis: Both,
+                // ),
+            ],
+        ),
+    },
+)

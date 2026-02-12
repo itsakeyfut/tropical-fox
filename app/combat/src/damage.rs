@@ -253,6 +253,7 @@ pub fn player_death_system(
     mut player_query: Query<(&mut Health, &mut Transform, Option<&mut Lives>), With<Player>>,
     spawn_point: Option<Res<PlayerSpawnPoint>>,
     mut next_state: ResMut<NextState<GameState>>,
+    mut player_death_events: MessageWriter<tropical_fox_common::PlayerDeathEvent>,
 ) {
     for event in death_events.read() {
         let Ok((mut health, mut transform, lives)) = player_query.get_mut(event.entity) else {
@@ -260,6 +261,9 @@ pub fn player_death_system(
         };
 
         info!("Player died!");
+
+        // Emit player death event for checkpoint respawn system
+        player_death_events.write(tropical_fox_common::PlayerDeathEvent);
 
         // Check if player has lives remaining
         if let Some(mut lives) = lives {

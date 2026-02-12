@@ -13,5 +13,6 @@ pub mod resources;
 
 // Re-export commonly used types
 pub use components::*;
+pub use events::*;
 pub use game_state::{GameState, InGameState};
 pub use resources::*;

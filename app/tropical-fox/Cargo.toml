@@ -16,6 +16,7 @@ tropical-fox-animation = { path = "../animation" }
 tropical-fox-combat = { path = "../combat" }
 tropical-fox-player = { path = "../player" }
 tropical-fox-enemy = { path = "../enemy" }
+tropical-fox-level = { path = "../level" }
 
 # Core dependencies
 bevy.workspace = true

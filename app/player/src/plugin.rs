@@ -93,7 +93,8 @@ impl Plugin for PlayerPlugin {
         app.add_systems(PostStartup, load_player_assets);
 
         // Spawn player and test level when entering InGame state
-        app.add_systems(OnEnter(GameState::InGame), (spawn_player, spawn_test_walls));
+        // COMMENTED OUT spawn_test_walls: Using LDtk level system instead
+        app.add_systems(OnEnter(GameState::InGame), spawn_player);
 
         // Player input and movement systems (run in Update)
         app.add_systems(
